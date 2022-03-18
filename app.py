@@ -7,7 +7,7 @@ from    util            import  add_scatters, add_pdfs, by_season, by_sequence, 
 
 
 PLOT_HEIGHT = 400
-BEGIN       = "2000-01-01"
+BEGIN       = "1900-01-01"
 END         = "2050-01-01"
 
 
@@ -79,8 +79,6 @@ def main(symbol: str, mode: str, defs: List):
         height  = PLOT_HEIGHT * plot_count,
         title   = f"{symbol} {mode}"
     )
-
-
 
     for i in range(plot_count):
 
