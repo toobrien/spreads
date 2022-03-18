@@ -34,8 +34,10 @@ double flies are also available; chart three in sequence:
 
 - spreads are quoted with the following legs: 
 
-    'cal':  -1, +1 
-    'fly':  +1, -2, +1 
+    'cal':  -1, +1
+
+    'fly':  +1, -2, +1
+    
     'dfly': +1, -3, +3, -1
 
 - for use with [futures_db](https://github.com/toobrien/futures_db)
