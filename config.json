@@ -1,0 +1,5 @@
+{
+    "db_path": "../data/futures.db",
+    "min_dte": 0,
+    "max_dte": 365
+}
