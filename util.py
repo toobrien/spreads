@@ -257,6 +257,37 @@ def by_sequence(
     return res
 
 
+def all(
+    term_days:  List,
+    legs:       List[tuple],
+    dte_min:    int,
+    dte_max:    int
+):
+
+    res = {
+        0: {}
+    }
+
+    for day in term_days:
+
+        lim = len(day) - len(legs)
+    
+        for i in range(lim):
+
+            if dte_max >= day[i][term.dte] >= dte_min:
+                
+                    s       = get_spread_row(day, i, legs)
+                    s_id    = s[spread.id]
+
+                    if s_id not in res[0]:
+
+                        res[0][s_id] = []
+                    
+                    res[0][s_id].append(s)
+
+    return res
+
+
 # ----- plotting -----
 
 

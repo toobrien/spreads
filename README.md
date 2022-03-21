@@ -30,6 +30,10 @@ double flies are also available; chart three in sequence:
 
 `python app.py ZQ dfly 0 1 2`
 
+for STIRs and some "regularly produced" commodities, you may simply want to group all contracts. view all ZQ spreads with 50 to 100 days to expiration:
+
+`python app.py ZQ fly all_50:150`
+
 # Notes
 
 - spreads are quoted with the following legs: 

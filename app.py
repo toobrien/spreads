@@ -2,8 +2,8 @@ from    plotly.subplots import  make_subplots
 from    sys             import  argv
 from    time            import  time
 from    typing          import  List
-from    util            import  add_scatters, add_pdfs, by_season, by_sequence, get_db, \
-                                get_legs, get_term_days, get_spread_ids
+from    util            import  all, add_scatters, add_pdfs, by_season, by_sequence, \
+                                get_db, get_legs, get_term_days, get_spread_ids
 
 
 PLOT_HEIGHT = 400
@@ -60,6 +60,18 @@ def main(symbol: str, mode: str, defs: List):
         elif sequences:
 
             results = by_sequence(term_days, legs, sequences)
+        
+        elif ":" in d:
+
+            parts       = d.split("_")
+            min_max_dte = parts[1].split(":")
+
+            results = all(
+                term_days,
+                legs,
+                int(min_max_dte[0]),
+                int(min_max_dte[1])
+            )
 
         for _, data in results.items():
 
