@@ -7,7 +7,7 @@ from    util            import  all, add_scatters, add_pdfs, by_season, by_seque
 
 
 PLOT_HEIGHT = 400
-BEGIN       = "1900-01-01"
+BEGIN       = "2000-01-01"
 END         = "2050-01-01"
 
 
