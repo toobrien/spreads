@@ -1,3 +1,4 @@
+from calendar import month
 from    datetime                import  datetime
 from    enum                    import  IntEnum
 from    json                    import  loads
@@ -11,10 +12,26 @@ CONFIG      = loads(open("./config.json").read())
 MIN_DTE     = CONFIG["min_dte"]
 MAX_DTE     = CONFIG["max_dte"]
 YEAR        = datetime.now().year
+MONTH       = datetime.now().month
 MIN_OPACITY = 0.2
 SCATTER_COL = 1
 PDF_COL     = 2
 
+
+MONTHS = {
+    "F": 1,
+    "G": 2,
+    "H": 3,
+    "J": 4,
+    "K": 5,
+    "M": 6,
+    "N": 7,
+    "Q": 8,
+    "U": 9,
+    "V": 10,
+    "X": 11,
+    "Z": 12
+}
 
 class term(IntEnum):
 
@@ -330,9 +347,12 @@ def add_scatters(
 
     for id, rows in spreads.items():
 
-        color       =   "#0000FF" if int(id[0][1]) < YEAR else "#FF0000"
-        opacity     =   min(opacity + step, 1)
-        friendly_id =   "".join(
+        spread_month    = id[0][0]
+        spread_year     = int(id[0][1])
+        current         = MONTHS[spread_month] >= MONTH and spread_year >= YEAR or spread_year >= YEAR
+        color           = "#FF0000" if current else "#0000FF"
+        opacity         = min(opacity + step, 1)
+        friendly_id     = "".join(
             t[0]
             for t in id
         ) + f" {id[0][1]}"
