@@ -1,0 +1,28 @@
+{
+    "HO": {
+        "cal": [ "JK", "KM", "MN", "NQ", "QU" ],
+        "fly": [ "JKM", "KMN", "MNQ", "NQU" ]
+    },
+    "CL": {
+        "fly": [ "QUV", "UVX" ]
+    },
+    "RB": {
+        "fly": [ "FGH" ]
+    },
+    "ZM": {
+        "fly": [ "VZF" ]
+    },
+    "HE": {
+        "cal": [ "JK", "QV" ],
+        "fly": [ "KMN", "VZG" ]
+    },
+    "ZC": {
+        "cal": [ "NU" ]
+    },
+    "ZO": {
+        "cal": [ "NU" ]
+    },
+    "ZQ": {
+        "fly": [ "NQU" ]
+    }
+}

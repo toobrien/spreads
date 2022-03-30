@@ -1,3 +1,4 @@
+from    json            import  loads
 from    plotly.subplots import  make_subplots
 from    sys             import  argv
 from    time            import  time
@@ -9,12 +10,16 @@ from    util            import  all, add_scatters, add_pdfs, by_season, by_seque
 PLOT_HEIGHT = 400
 BEGIN       = "1900-01-01"
 END         = "2050-01-01"
+TERM_DAYS   = {}
+DB          = get_db()
 
+def render(symbol: str, mode: str, defs: List):
 
-def main(symbol: str, mode: str, defs: List):
+    if symbol not in TERM_DAYS:
 
-    db                  = get_db()
-    term_days           = get_term_days(db, symbol, BEGIN, END)
+        TERM_DAYS[symbol] = get_term_days(DB, symbol, BEGIN, END)
+
+    term_days           = TERM_DAYS[symbol]
     legs                = get_legs(mode)
     today               = term_days[-1]
     todays_spread_ids   = get_spread_ids(today, legs)
@@ -106,10 +111,22 @@ if __name__ == "__main__":
 
     start   = time()
 
-    symbol  = argv[1]
-    mode    = argv[2]
-    defs    = argv[3:] 
+    if argv[1] == "watchlist":
 
-    main(symbol, mode, defs)
+        watchlist = loads(open("./watchlist.json", "r").read())
+
+        for symbol, defs in watchlist.items():
+
+            for mode, defs in defs.items():
+
+                render(symbol, mode, defs)
+
+    else:
+
+        symbol  = argv[1]
+        mode    = argv[2]
+        defs    = argv[3:] 
+
+        render(symbol, mode, defs)
 
     print(f"elapsed: {time() - start:0.1f}")
