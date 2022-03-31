@@ -113,9 +113,10 @@ if __name__ == "__main__":
 
     if argv[1] == "watchlist":
 
-        watchlist = loads(open("./watchlist.json", "r").read())
+        watchlist_name  = argv[2]
+        watchlist       = loads(open("./watchlists.json", "r").read())
 
-        for symbol, defs in watchlist.items():
+        for symbol, defs in watchlist[watchlist_name].items():
 
             for mode, defs in defs.items():
 

@@ -1,0 +1,43 @@
+{
+    "trades": {
+        "HO": {
+            "fly": [ "KMN", "NQU" ]
+        },
+        "CL": {
+            "fly": [ "QUV" ]
+        },
+        "RB": {
+            "fly": [ "FGH" ]
+        },
+        "ZM": {
+            "fly": [ "VZF" ]
+        },
+        "HE": {
+            "cal": [ "QV" ]
+        },
+        "ZC": {
+            "cal": [ "NU" ]
+        },
+        "ZO": {
+            "cal": [ "NU" ]
+        }
+    },
+    "default": {
+        "HO": {
+            "cal": [ "KM", "MN", "NQ", "QU", "UV" ],
+            "fly": [ "KMN", "MNQ", "NQU", "QUV", "UVX" ]
+        },
+        "CL": {
+            "cal": [ "KM", "MN", "NQ", "QU", "UV" ],
+            "fly": [ "KMN", "MNQ", "NQU", "QUV", "UVX" ]
+        },
+        "ZW": {
+            "cal": [ "KN", "NU", "UZ", "ZH" ],
+            "fly": [ "KNU", "NUZ", "UZH" ]
+        },
+        "KE": {
+            "cal": [ "KN", "NU", "UZ", "ZH" ],
+            "fly": [ "KNU", "NUZ", "UZH" ]
+        }
+    }
+}

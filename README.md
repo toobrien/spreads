@@ -34,11 +34,11 @@ for STIRs and some "regularly produced" commodities, you may simply want to grou
 
 `python app.py ZQ fly all_50:150`
 
-# Watchlist
+# Watchlists
 
-To avoid the tedium of entering the same spreads on successive days, you can configure `watchlist.json` to render a set of spreads automatically. See the included file for an example. To execute the watchlist:
+To avoid the tedium of entering the same spreads on successive days, you can configure `watchlists.json` to render sets of spreads automatically. See the included file for examples. To execute the `default` watchlist:
 
-`python app.py watchlist`
+`python app.py watchlist default`
 
 # Notes
 
