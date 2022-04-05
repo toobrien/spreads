@@ -4,7 +4,8 @@ from    sys             import  argv
 from    time            import  time
 from    typing          import  List
 from    util            import  all, add_scatters, add_pdfs, by_season, by_sequence, \
-                                get_db, get_legs, get_term_days, get_spread_ids
+                                get_db, get_legs, get_term_days, get_spread_ids, \
+                                print_spreads
 
 
 PLOT_HEIGHT = 400
@@ -13,7 +14,12 @@ END         = "2050-01-01"
 TERM_DAYS   = {}
 DB          = get_db()
 
-def render(symbol: str, mode: str, defs: List):
+def render(
+    symbol: str,
+    mode:   str, 
+    defs:   List,
+    text:   bool
+):
 
     if symbol not in TERM_DAYS:
 
@@ -87,29 +93,42 @@ def render(symbol: str, mode: str, defs: List):
 
     # generate figure
 
-    fig = make_subplots(
-            rows = plot_count, 
-            cols = 2,
-        )
+    if not text:
     
-    fig.update_layout(
-        height  = PLOT_HEIGHT * plot_count,
-        title   = f"{symbol} {mode}"
-    )
+        fig = make_subplots(
+                rows = plot_count, 
+                cols = 2,
+            )
+        
+        fig.update_layout(
+            height  = PLOT_HEIGHT * plot_count,
+            title   = f"{symbol} {mode}"
+        )
 
-    for i in range(plot_count):
+        for i in range(plot_count):
 
-        per_plot_spreads = plots[i]
+            per_plot_spreads = plots[i]
 
-        add_scatters(fig, i + 1, per_plot_spreads)
-        add_pdfs(fig, i + 1, per_plot_spreads)
+            add_scatters(fig, i + 1, per_plot_spreads)
+            add_pdfs(fig, i + 1, per_plot_spreads)
 
-    fig.show()
+        fig.show()
+
+    else:
+
+        print_spreads(symbol, mode, plots)
 
 
 if __name__ == "__main__":
 
     start   = time()
+
+    text = False
+
+    if "text" in argv:
+
+        argv.remove("text")
+        text = True
 
     if argv[1] == "watchlist":
 
@@ -120,7 +139,7 @@ if __name__ == "__main__":
 
             for mode, defs in defs.items():
 
-                render(symbol, mode, defs)
+                render(symbol, mode, defs, text)
 
     else:
 
@@ -128,6 +147,6 @@ if __name__ == "__main__":
         mode    = argv[2]
         defs    = argv[3:] 
 
-        render(symbol, mode, defs)
+        render(symbol, mode, defs, text)
 
     print(f"elapsed: {time() - start:0.1f}")

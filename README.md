@@ -40,6 +40,13 @@ To avoid the tedium of entering the same spreads on successive days, you can con
 
 `python app.py watchlist default`
 
+# Text Mode
+
+You can add the word "text" to the end of the command for a printout, rather than charts. For example:
+
+`python app.py ZL fly all_0:120 text`
+`python app.py watchlist default text`
+
 # Notes
 
 - spreads are quoted with the following legs: 

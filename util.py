@@ -16,7 +16,7 @@ MONTH       = datetime.now().month
 MIN_OPACITY = 0.2
 SCATTER_COL = 1
 PDF_COL     = 2
-
+HISTORY     = 3
 
 MONTHS = {
     "F": 1,
@@ -308,24 +308,18 @@ def all(
 # ----- plotting -----
 
 
-def add_scatters(
-    fig:        go.Figure,
-    row:        int,
-    spreads:    dict
-):
+def is_current(spread_month: str, spread_year: int):
 
-    if not spreads:
+    return MONTHS[spread_month] >= MONTH and spread_year == YEAR or spread_year > YEAR
 
-        return
 
-    traces  = {}
-    opacity = MIN_OPACITY
-    step    = (1 - MIN_OPACITY) / len(spreads)
-    
-    # calculate mean and stdev for z-score
+# calculate mean and stdev for z-score
+
+def z_stats(spreads: dict):
 
     mu      = 0
     sigma   = 1
+
     settles = [
         r[spread.settle]
         for id, rows in spreads.items()
@@ -343,13 +337,32 @@ def add_scatters(
     
         pass
 
+    return mu, sigma
+
+
+def add_scatters(
+    fig:        go.Figure,
+    row:        int,
+    spreads:    dict
+):
+
+    if not spreads:
+
+        return
+
+    traces  = {}
+    opacity = MIN_OPACITY
+    step    = (1 - MIN_OPACITY) / len(spreads)
+
+    mu, sigma = z_stats(spreads)
+    
     # traces
 
     for id, rows in spreads.items():
 
         spread_month    = id[0][0]
         spread_year     = int(id[0][1])
-        current         = MONTHS[spread_month] >= MONTH and spread_year >= YEAR or spread_year >= YEAR
+        current         = is_current(spread_month, spread_year)
         color           = "#FF0000" if current else "#0000FF"
         opacity         = min(opacity + step, 1)
         friendly_id     = "".join(
@@ -403,3 +416,50 @@ def add_pdfs(
         row = row,
         col = PDF_COL
     )
+
+
+# ----- printing -----
+
+
+def print_spreads(symbol: str, mode: str, plots: dict):
+
+    out = []
+
+    for _, spreads in plots.items():
+
+        mu, sigma = z_stats(spreads)
+
+        for spread_id, rows in spreads.items():
+
+            spread_month    = spread_id[0][0]
+            spread_year     = spread_id[0][1]
+
+            if is_current(spread_month, int(spread_year)):
+
+                friendly_id = "".join(
+                    t[0]
+                    for t in spread_id
+                ) + f" {spread_year[2:]}"
+
+                latest = rows[-HISTORY:]
+                latest = list(reversed(latest))
+
+                out.append(
+                    [
+                        f"{symbol} {friendly_id} {mode}\t".rjust(15),
+                        f"{latest[0][spread.date]}\t".rjust(10),
+                        f"{latest[0][spread.dte]}\t".rjust(5),
+                        f"{(latest[0][spread.settle] - mu) / sigma: 0.2f}".rjust(8),
+                        "".join([ f"{r[spread.settle]: 0.5f}".rjust(12) for r in latest ])
+                    ]
+                )
+
+    # sort by dte
+
+    out = sorted(out, key = lambda r: int(r[2]))
+    
+    for line in out:
+
+        print("".join(line))
+
+    print("\n")
