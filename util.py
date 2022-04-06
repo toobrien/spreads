@@ -16,7 +16,7 @@ MONTH       = datetime.now().month
 MIN_OPACITY = 0.2
 SCATTER_COL = 1
 PDF_COL     = 2
-HISTORY     = 3
+HISTORY     = 5
 
 MONTHS = {
     "F": 1,
@@ -446,8 +446,8 @@ def print_spreads(symbol: str, mode: str, plots: dict):
 
                 out.append(
                     [
-                        f"{symbol} {friendly_id} {mode}\t".rjust(15),
-                        f"{latest[0][spread.date]}\t".rjust(10),
+                        f"{symbol} {friendly_id} {mode}\t".ljust(15),
+                        f"{latest[0][spread.date]}\t".ljust(10),
                         f"{latest[0][spread.dte]}\t".rjust(5),
                         f"{(latest[0][spread.settle] - mu) / sigma: 0.2f}".rjust(8),
                         "".join([ f"{r[spread.settle]: 0.5f}".rjust(12) for r in latest ])

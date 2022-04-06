@@ -1,10 +1,13 @@
 {
     "trades": {
         "HO": {
-            "fly": [ "KMN", "NQU", "QUV" ]
+            "fly": [ "KMN", "NQU", "QUV" ],
+            "cal": [ "JK", "KM", "MN" ]
+            
         },
         "CL": {
-            "cal": [ "KM", "MN", "NQ" ]
+            "cal": [ "KM", "MN", "NQ" ],
+            "fly": [ "UVX" ]
         },
         "RB": {
             "fly": [ "FGH" ]
@@ -14,57 +17,55 @@
         },
         "ZO": {
             "cal": [ "NU" ]
-        }
-    },
-    "default": {
-        "HO": {
-            "cal": [ "KM", "MN", "NQ", "QU", "UV" ],
-            "fly": [ "KMN", "MNQ", "NQU", "QUV", "UVX" ]
-        },
-        "CL": {
-            "cal": [ "KM", "MN", "NQ", "QU", "UV" ],
-            "fly": [ "KMN", "MNQ", "NQU", "QUV", "UVX" ]
         },
         "ZW": {
-            "cal": [ "KN", "NU", "UZ", "ZH" ],
-            "fly": [ "KNU", "NUZ", "UZH" ]
-        },
-        "KE": {
-            "cal": [ "KN", "NU", "UZ", "ZH" ],
-            "fly": [ "KNU", "NUZ", "UZH" ]
-        },
-        "HE": {
-            "cal": [ "JK", "KM", "MN", "NQ", "QU", "UV", "VZ" ],
-            "fly": [ "JKM", "KMN", "MNQ", "NQU", "QUV", "UVZ" ]
-        },
-        "LE": {
-            "cal": [ "JK", "KM", "MN", "NQ", "QU", "UV", "VZ" ],
-            "fly": [ "JKM", "KMN", "MNQ", "NQU", "QUV", "UVZ" ]
-        }
-    },
-    "closely": {
-        "ZW": {
-            "fly": [ "UZH" ]
+            "fly": [ "UZH", "HKN" ]
         },
         "HE": {
             "cal": [ "JK", "MN", "NQ", "QV" ],
             "fly": [ "KMN", "VZG" ]
         },
-        "CL": {
-            "fly": [ "UVX" ]
-        },
         "KE": {
-            "fly": [ "HKN" ]
-        },
-        "HO": {
-            "cal": [ "JK", "KM", "MN" ],
-            "fly": [ "JKM", "VXZ" ]
+            "fly": [ "HKN" ],
+            "cal": [ "KN" ]
         },
         "VX": {
             "fly": [ "JKM" ]
         },
         "ZQ": {
             "fly": [ "NQU" ]
+        }
+    },
+    "scan": {
+        "HO": {
+            "cal": [ "all_sea" ],
+            "fly": [ "all_sea" ]
+        },
+        "CL": {
+            "cal": [ "all_sea" ],
+            "fly": [ "all_sea" ]
+        },
+        "ZW": {
+            "cal": [ "all_sea" ],
+            "fly": [ "all_sea" ]
+        },
+        "KE": {
+            "cal": [ "all_sea" ],
+            "fly": [ "all_sea" ]
+        },
+        "HE": {
+            "cal": [ "all_sea" ],
+            "fly": [ "all_sea" ]
+        },
+        "LE": {
+            "cal": [ "all_sea" ],
+            "fly": [ "all_sea" ]
+        },
+        "ZO": {
+            "cal": [ "all_sea" ]
+        },
+        "VX": {
+            "cal": [ "all_0:365" ]
         }
     }
 }
