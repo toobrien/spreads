@@ -2,12 +2,11 @@
     "trades": {
         "HO": {
             "fly": [ "KMN", "NQU", "QUV" ],
-            "cal": [ "JK", "KM", "MN" ]
+            "cal": [ "KM", "MN", "NQ" ]
             
         },
         "CL": {
-            "cal": [ "KM", "MN", "NQ" ],
-            "fly": [ "UVX" ]
+            "cal": [ "KM", "MN", "NQ" ]
         },
         "RB": {
             "fly": [ "FGH" ]
@@ -18,19 +17,17 @@
         "ZO": {
             "cal": [ "NU" ]
         },
-        "ZW": {
-            "fly": [ "UZH", "HKN" ]
-        },
-        "HE": {
-            "cal": [ "JK", "MN", "NQ", "QV" ],
-            "fly": [ "KMN", "VZG" ]
+        "LE": {
+            "cal": [ "QV" ]
         },
         "KE": {
-            "fly": [ "HKN" ],
             "cal": [ "KN" ]
         },
         "VX": {
             "fly": [ "JKM" ]
+        },
+        "GE": {
+            "fly": [ "KMN", "MNQ" ]
         },
         "ZQ": {
             "fly": [ "NQU" ]
@@ -53,6 +50,22 @@
             "cal": [ "all_sea" ],
             "fly": [ "all_sea" ]
         },
+        "ZS": {
+            "cal": [ "all_sea" ],
+            "fly": [ "all_sea" ]
+        },
+        "ZL": {
+            "cal": [ "all_0:1500" ],
+            "fly": [ "all_0:1500" ]
+        },
+        "ZM": {
+            "cal": [ "all_0:1500" ],
+            "fly": [ "all_0:1500" ]
+        },
+        "ZC": {
+            "cal": [ "all_sea"],
+            "fly": [ "all_sea" ]
+        },
         "HE": {
             "cal": [ "all_sea" ],
             "fly": [ "all_sea" ]
@@ -66,6 +79,14 @@
         },
         "VX": {
             "cal": [ "all_0:365" ]
+        },
+        "ZQ": {
+            "cal": [ "all_0:3000" ],
+            "fly": [ "all_0:3000" ]
+        },
+        "GE": {
+            "cal": [ "all_0:3000" ],
+            "fly": [ "all_0:3000" ]
         }
     }
 }

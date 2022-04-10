@@ -16,7 +16,7 @@ MONTH       = datetime.now().month
 MIN_OPACITY = 0.2
 SCATTER_COL = 1
 PDF_COL     = 2
-HISTORY     = 5
+HISTORY     = 10
 
 MONTHS = {
     "F": 1,
@@ -181,7 +181,6 @@ def get_legs(mode: str):
             ( 1, -2 ),
             ( 2,  1 ) 
         )
-    
 
     elif mode == "dfly":
 
@@ -190,6 +189,15 @@ def get_legs(mode: str):
             ( 1, -3 ),
             ( 2,  3 ), 
             ( 3, -1 ) 
+        )
+
+    elif mode == "cond":
+
+        legs = (
+            ( 0,  1 ),
+            ( 1, -1 ),
+            ( 2, -1),
+            ( 3,  1 )
         )
 
     return legs
