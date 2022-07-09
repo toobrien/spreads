@@ -1,11 +1,10 @@
-from calendar import month
 from    datetime                import  datetime
 from    enum                    import  IntEnum
 from    json                    import  loads
 import  plotly.graph_objects    as      go
 from    sqlite3                 import  connect, Connection
 from    statistics              import  mean, stdev
-from    typing                  import  List
+from    typing                  import  List, Tuple
 
 
 CONFIG      = loads(open("./config.json").read())
@@ -227,9 +226,9 @@ def get_seasons(term_day: List, legs: List[tuple]):
 
 
 def by_season(
-    term_days: List, 
-    legs: List[tuple], 
-    seasons: set
+    term_days:  List, 
+    legs:       List[tuple], 
+    seasons:    set
 ):
 
     latest  = term_days[-1]
@@ -318,6 +317,34 @@ def all(
                         res[0][s_id] = []
                     
                     res[0][s_id].append(s)
+
+    return res
+
+
+# keep only rows belonging to identified contracts
+# contracts = [ (M, YYYY), ... ]
+#
+# note: allows duplicates
+
+def filter_by_sea(term_days: List[List], contracts: Tuple):
+
+    res = []
+
+    for term_day in term_days:
+
+        filtered = []
+
+        for r in term_day:
+
+            for contract in contracts:
+
+                if r[term.month] == contract[0] and r[term.year] == contract[1]:
+
+                    filtered.append(r)
+
+        if len(filtered) == len(contracts):
+
+            res.append(filtered)
 
     return res
 

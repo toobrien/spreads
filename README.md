@@ -48,6 +48,16 @@ You can add the word "text" to the end of the command for a printout, rather tha
 
 `python app.py watchlist default text`
 
+# Regression
+
+`reg.py` allows you to regress either a reverse calendar or a butterfly onto a single contract, such as the front leg. Example usage:
+
+`python reg.py pct HON2022 HON2022:HOQ2022 2022-02-01 2022-07-01 15`
+
+The first argument determines whether log returns (`pct`) or subtraction (`abs`) is used to difference the series for regression. The second argument is the regressor variable, a single contract identified by symbol, month and year. The third argument identifies the response variable, which is a spread. A colon separates each leg. If there are two legs, the spread is a reverse calendar (+1, -1); if there are three legs, it is a butterfly (+1, -2, +1). The next two arguments are start and end dates in yyyy-mm-dd format. The last argument is the number of records to display, which show the settlement values for both the spread and regressor contract, and their changes for each day.
+
+The example above regresses the july/august heating oil spread onto the july leg using log returns, between February 1st and July 1st, and displays 15 records.
+
 # Notes
 
 - spreads are quoted with the following legs: 
