@@ -1,46 +1,29 @@
 {
     "trades": {
+        "CL": {
+            "fly": [ "MNQ", "NQU" ],
+            "cal": [ "MN", "NQ", "QU", "UV" ]
+        },
         "HO": {
-            "fly": [ "KMN", "NQU", "QUV" ],
-            "cal": [ "KM", "MN", "NQ" ]
+            "fly": [ "NQU", "QUV" ],
+            "cal": [ "MN", "NQ" ]
             
         },
-        "CL": {
-            "cal": [ "KM", "MN", "NQ" ]
-        },
-        "RB": {
-            "fly": [ "FGH" ]
+        "LE": {
+            "fly": [ "GJM" ]
         },
         "ZC": {
             "cal": [ "NU" ]
-        },
-        "ZO": {
-            "cal": [ "NU" ]
-        },
-        "LE": {
-            "cal": [ "QV" ]
-        },
-        "KE": {
-            "cal": [ "KN" ]
-        },
-        "VX": {
-            "fly": [ "JKM" ]
-        },
-        "GE": {
-            "fly": [ "KMN", "MNQ" ]
-        },
-        "ZQ": {
-            "fly": [ "NQU" ]
         }
     },
     "scan": {
         "HO": {
-            "cal": [ "all_sea" ],
-            "fly": [ "all_sea" ]
+            "cal": [ "all_0:1000" ],
+            "fly": [ "all_0:1000" ]
         },
         "CL": {
-            "cal": [ "all_sea" ],
-            "fly": [ "all_sea" ]
+            "cal": [ "all_0:1000" ],
+            "fly": [ "all_0:1000" ]
         },
         "ZW": {
             "cal": [ "all_sea" ],
@@ -55,12 +38,12 @@
             "fly": [ "all_sea" ]
         },
         "ZL": {
-            "cal": [ "all_0:1500" ],
-            "fly": [ "all_0:1500" ]
+            "cal": [ "all_0:1000" ],
+            "fly": [ "all_0:1000" ]
         },
         "ZM": {
-            "cal": [ "all_0:1500" ],
-            "fly": [ "all_0:1500" ]
+            "cal": [ "all_0:1000" ],
+            "fly": [ "all_0:1000" ]
         },
         "ZC": {
             "cal": [ "all_sea"],
@@ -78,15 +61,18 @@
             "cal": [ "all_sea" ]
         },
         "VX": {
-            "cal": [ "all_0:365" ]
+            "cal": [ "all_0:365" ],
+            "fly": [ "all_0:365" ]
         },
         "ZQ": {
-            "cal": [ "all_0:3000" ],
-            "fly": [ "all_0:3000" ]
+            "cal": [ "all_0:1000" ],
+            "fly": [ "all_0:1000" ],
+            "cond": [ "all_0:1000" ]
         },
         "GE": {
-            "cal": [ "all_0:3000" ],
-            "fly": [ "all_0:3000" ]
+            "cal": [ "all_0:" ],
+            "fly": [ "all_0:1000" ],
+            "cond": [ "all_0:1000" ]
         }
     }
 }
