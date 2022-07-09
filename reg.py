@@ -121,13 +121,14 @@ def app(
 
     # display output
 
+    print("num records:".ljust(12), f"{len(differenced):12d}")
     print("alpha:".ljust(12), f"{alpha:12.3f}")
     print("beta:".ljust(12), f"{beta:12.3f}")
     print("r^2:".ljust(12), f"{r_2:12.3f}\n")
 
     if num_records == -1:
 
-        filtered = filtered[1:]
+        reg_records = reg_records[:1]
 
     elif num_records == 0:
 
@@ -135,7 +136,7 @@ def app(
 
     else: 
 
-        filtered    = filtered[-num_records - 1:]
+        reg_records = reg_records[-num_records - 1:]
         differenced = differenced[-num_records:]
 
     print(
@@ -156,8 +157,6 @@ def app(
             f"{d_rec[reg_record.contract_val]:12.3f}",
             f"{d_rec[reg_record.spread_val]:12.3f}"
         )
-
-    pass
 
 
 if __name__ == "__main__":
