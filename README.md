@@ -32,7 +32,7 @@ double flies are also available; chart three in sequence:
 
 for STIRs and some "regularly produced" commodities, you may simply want to group all contracts. view all ZQ spreads with 50 to 100 days to expiration:
 
-`python app.py ZQ fly all_50:150`
+`python app.py ZQ fly all_50:150` 
 
 # Watchlists
 
@@ -53,6 +53,8 @@ You can add the word "text" to the end of the command for a printout, rather tha
 - spreads are quoted with the following legs: 
 
     'cal':  -1, +1
+
+    'rcal': +1, -1
 
     'fly':  +1, -2, +1
     
