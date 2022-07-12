@@ -142,8 +142,8 @@ def app(
     print(
         "date".rjust(12),
         "c_stl".rjust(12),
-        "s_stl".rjust(12),
         "c_chg".rjust(12),
+        "s_stl".rjust(12),
         "s_chg".rjust(12),
         "\n"
     )
@@ -153,8 +153,8 @@ def app(
         print(
             r_rec[reg_record.date].rjust(12),
             f"{r_rec[reg_record.contract_val]:12.3f}",
-            f"{r_rec[reg_record.spread_val]:12.3f}",
             f"{d_rec[reg_record.contract_val]:12.3f}",
+            f"{r_rec[reg_record.spread_val]:12.3f}",
             f"{d_rec[reg_record.spread_val]:12.3f}"
         )
 
