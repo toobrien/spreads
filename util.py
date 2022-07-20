@@ -15,7 +15,7 @@ MONTH       = datetime.now().month
 MIN_OPACITY = 0.2
 SCATTER_COL = 1
 PDF_COL     = 2
-HISTORY     = 12
+HISTORY     = 20
 
 MONTHS = {
     "F": 1,
@@ -467,7 +467,7 @@ def add_pdfs(
 
 def print_spreads(symbol: str, mode: str, plots: dict):
 
-    out = []
+    out = {}
 
     for _, spreads in plots.items():
 
@@ -488,22 +488,30 @@ def print_spreads(symbol: str, mode: str, plots: dict):
                 latest = rows[-HISTORY:]
                 latest = list(reversed(latest))
 
-                out.append(
+                out[f"{symbol} {friendly_id} {mode}"] = [
                     [
-                        f"{symbol} {friendly_id} {mode}\t".ljust(15),
-                        f"{latest[0][spread.date]}\t".ljust(10),
-                        f"{latest[0][spread.dte]}\t".rjust(5),
-                        f"{(latest[0][spread.settle] - mu) / sigma: 0.2f}".rjust(8),
-                        "".join([ f"{r[spread.settle]: 0.5f}".rjust(12) for r in latest ])
+                        f"{rec[spread.date]}".ljust(10),
+                        f"{rec[spread.dte]}".rjust(5),
+                        f"{(rec[spread.settle] - mu) / sigma: 0.2f}".rjust(8),
+                        f"{rec[spread.settle]: 0.5f}".rjust(12)
                     ]
-                )
+                    for rec in latest
+                ]    
 
     # sort by dte
 
-    out = sorted(out, key = lambda r: int(r[2]))
+    sorted_spread_ids = sorted(out.keys(), key = lambda k: out[k][0][2], reverse = True)
     
-    for line in out:
+    # print spreads sequentially
 
-        print("".join(line))
+    for spread_id in sorted_spread_ids:
 
-    print("\n")
+        print("\n", spread_id.center(35), "\n")
+        print("date".center(10), "dte".center(5), "sigma".center(8), "settle".center(12))
+        print("-" * 10, "-" * 5, "-" * 8, "-" * 12, "\n")
+
+        recs = out[spread_id]
+
+        for rec in recs:
+        
+            print("".join(rec))
