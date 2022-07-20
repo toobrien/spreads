@@ -500,7 +500,7 @@ def print_spreads(symbol: str, mode: str, plots: dict):
 
     # sort by dte
 
-    sorted_spread_ids = sorted(out.keys(), key = lambda k: out[k][0][2], reverse = True)
+    sorted_spread_ids = sorted(out.keys(), key = lambda k: out[k][0][2].strip())
     
     # print spreads sequentially
 
@@ -515,3 +515,5 @@ def print_spreads(symbol: str, mode: str, plots: dict):
         for rec in recs:
         
             print("".join(rec))
+
+    print("\n")
