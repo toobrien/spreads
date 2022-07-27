@@ -135,7 +135,7 @@ def get_spread_row(term_day: List, i: int, legs: List):
         settle += term_day[i + l[leg.idx]][term.settle] * l[leg.ratio] 
 
     dte     = term_day[i][term.dte]
-    spread     = [ date, id, settle, dte ]
+    spread  = [ date, id, settle, dte ]
 
     return spread
 
@@ -147,7 +147,7 @@ def get_spread_ids(
 
     ids = {}
 
-    for i in range(len(term_day) - len(legs)):
+    for i in range(len(term_day) - len(legs) + 1):
             
         spread_id = tuple(
             (
@@ -215,7 +215,7 @@ def get_seasons(term_day: List, legs: List[tuple]):
 
     seasons = []
 
-    for i in range(len(term_day) - len(legs)):
+    for i in range(len(term_day) - len(legs) + 1):
 
         seasons.append(
             ( term_day[i + l[leg.idx]][term.month] )
@@ -232,7 +232,7 @@ def by_season(
 ):
 
     latest  = term_days[-1]
-    lim     = len(latest) - len(legs)
+    lim     = len(latest) - len(legs) + 1
 
     res = { 
         season : {}
@@ -241,7 +241,7 @@ def by_season(
 
     for day in term_days:
 
-        for i in range(min(len(day) - len(legs), lim)):
+        for i in range(min(len(day) - len(legs) + 1, lim)):
 
             if MAX_DTE >= day[i][term.dte] >= MIN_DTE:
             
@@ -303,7 +303,7 @@ def all(
 
     for day in term_days:
 
-        lim = len(day) - len(legs)
+        lim = len(day) - len(legs) + 1
     
         for i in range(lim):
 
