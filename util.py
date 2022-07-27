@@ -407,7 +407,7 @@ def add_scatters(
         spread_month    = id[0][0]
         spread_year     = int(id[0][1])
         current         = is_current(spread_month, spread_year)
-        color           = "#FF0000" if current else "#0000FF"
+        color           = None if current else "#0000FF"
         opacity         = min(opacity + step, 1)
         friendly_id     = "".join(
             t[0]
