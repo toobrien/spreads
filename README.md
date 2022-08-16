@@ -2,37 +2,41 @@ chart spreads of various types against historical issues
 
 # Usage
 
-chart all butterflies by sequence, i.e. 0 = m1, m2, m3; 1 = m2, m3, m4; and so on:
+chart all 1-wide butterflies by sequence, i.e. 0 = m1, m2, m3; 1 = m2, m3, m4; and so on:
 
-`python app.py CL fly all_seq`
+`python app.py CL fly:1 all_seq`
 
-chart all butterflies by season, i.e. 'FGH', 'GHJ', 'HJK' etc.:
+note: the ":1" designates the width of the butterfly. each wing will be one expiration wide
 
-`python app.py ZW fly all_sea`
+chart all 1-wide butterflies by season, i.e. 'FGH', 'GHJ', 'HJK' etc.:
 
-chart one season of butterflies:
+`python app.py ZW fly:1 all_sea`
 
-`python app.py HO fly JKM`
+chart one season of 1-wide butterflies:
 
-chart one sequence of butterflies:
+`python app.py HO fly:1 JKM`
 
-`python app.py ZL fly 0`
+note: the width designation is *always required*, and must match the sequence of expirations given by "JKM"
+
+chart one sequence of 1-wide butterflies:
+
+`python app.py ZL fly:1 0`
 
 chart one season and one sequence:
 
-`python app.py GE fly MUZ 0`
+`python app.py GE fly:1 MUZ 0`
 
 chart two calendars in consecutive seasons:
 
-`python app.py ZC cal HK KN`
+`python app.py ZC cal:1 HK KN`
 
 double flies are also available; chart three in sequence:
 
-`python app.py ZQ dfly 0 1 2`
+`python app.py ZQ dfly:1 0 1 2`
 
-for STIRs and some "regularly produced" commodities, you may simply want to group all contracts. view all ZQ spreads with 50 to 100 days to expiration:
+for STIRs and some "regularly produced" commodities, you may simply want to group all contracts. view all 1-wide ZQ spreads with 50 to 100 days to expiration:
 
-`python app.py ZQ fly all_50:150` 
+`python app.py ZQ fly:1 all_50:150`
 
 # Watchlists
 
@@ -44,7 +48,7 @@ To avoid the tedium of entering the same spreads on successive days, you can con
 
 You can add the word "text" to the end of the command for a printout, rather than charts. For example:
 
-`python app.py ZL fly all_0:120 text`
+`python app.py ZL fly:1 all_0:120 text`
 
 `python app.py watchlist default text`
 
@@ -60,7 +64,7 @@ The example above regresses the july/august heating oil spread onto the july leg
 
 # Notes
 
-- spreads are quoted with the following legs: 
+- spreads are quoted with the following leg ratios: 
 
     'cal':  -1, +1
 
@@ -71,6 +75,6 @@ The example above regresses the july/august heating oil spread onto the july leg
     'dfly': +1, -3, +3, -1
 
 - for use with [futures_db](https://github.com/toobrien/futures_db)
-- active spreads are highlighted red, while those expired are progressively fainter blue
+- active spreads have various colors, while those expired are progressively fainter blue
 - adjust min/max dte to get the best default fit for your scatter plots
 - the histogram is in probability density format

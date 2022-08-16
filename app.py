@@ -16,7 +16,8 @@ DB          = get_db()
 
 def render(
     symbol: str,
-    mode:   str, 
+    mode:   str,
+    width:  int,
     defs:   List,
     text:   bool
 ):
@@ -26,9 +27,10 @@ def render(
         TERM_DAYS[symbol] = get_term_days(DB, symbol, BEGIN, END)
 
     term_days           = TERM_DAYS[symbol]
-    legs                = get_legs(mode)
     today               = term_days[-1]
-    todays_spread_ids   = get_spread_ids(today, legs)
+    legs                = get_legs(mode, width)
+    total_width         = legs[-1][0]
+    todays_spread_ids   = get_spread_ids(today, legs, total_width)
     plots               = {}
     plot_count          = 0
 
@@ -41,7 +43,7 @@ def render(
         if d == "all_seq":
 
             sequences = {
-                i for i in range(len(today) - len(legs))
+                i for i in range(len(today) - total_width)
             }
 
         elif d == "all_sea":
@@ -66,11 +68,11 @@ def render(
 
         if seasons:
 
-            results = by_season(term_days, legs, seasons)
+            results = by_season(term_days, legs, total_width, seasons)
 
         elif sequences:
 
-            results = by_sequence(term_days, legs, sequences)
+            results = by_sequence(term_days, legs, total_width, sequences)
         
         elif ":" in d:
 
@@ -139,14 +141,20 @@ if __name__ == "__main__":
 
             for mode, defs in defs.items():
 
-                render(symbol, mode, defs, text)
+                mode_parts  = argv[2].split(":")
+                mode        = mode_parts[1]
+                width       = int(mode_parts[2])
+
+                render(symbol, mode, width, defs, text)
 
     else:
 
-        symbol  = argv[1]
-        mode    = argv[2]
-        defs    = argv[3:] 
+        symbol      = argv[1]
+        mode_parts  = argv[2].split(":")
+        mode        = mode_parts[0]
+        width       = int(mode_parts[1])
+        defs        = argv[3:]
 
-        render(symbol, mode, defs, text)
+        render(symbol, mode, width, defs, text)
 
     print(f"elapsed: {time() - start:0.1f}")

@@ -141,13 +141,14 @@ def get_spread_row(term_day: List, i: int, legs: List):
 
 
 def get_spread_ids(
-    term_day:   List, 
-    legs:    tuple
+    term_day:       List,
+    legs:           tuple,
+    total_width:    int
 ) -> dict[tuple : int]:
 
     ids = {}
 
-    for i in range(len(term_day) - len(legs) + 1):
+    for i in range(len(term_day) - total_width):
             
         spread_id = tuple(
             (
@@ -162,15 +163,31 @@ def get_spread_ids(
     return ids
 
 
-def get_legs(mode: str):
+# spread rules:
+# 
+# calendar:         https://www.cmegroup.com/confluence/display/EPICSANDBOX/Spreads+and+Combinations+Available+on+CME+Globex#SpreadsandCombinationsAvailableonCMEGlobex-SPStandardCalendarSpread
+# reverse calendar: https://www.cmegroup.com/confluence/display/EPICSANDBOX/Spreads+and+Combinations+Available+on+CME+Globex#SpreadsandCombinationsAvailableonCMEGlobex-EQCalendarSpread
+# butterfly:        https://www.cmegroup.com/confluence/display/EPICSANDBOX/Spreads+and+Combinations+Available+on+CME+Globex#SpreadsandCombinationsAvailableonCMEGlobex-BFButterfly
+# double butterfly: https://www.cmegroup.com/confluence/display/EPICSANDBOX/Spreads+and+Combinations+Available+on+CME+Globex#SpreadsandCombinationsAvailableonCMEGlobex-DFDoubleButterfly
+# condor:           https://www.cmegroup.com/confluence/display/EPICSANDBOX/Spreads+and+Combinations+Available+on+CME+Globex#SpreadsandCombinationsAvailableonCMEGlobex-CFCondor
+#
+# notes: 
+#   
+#   - condor follows the "strict" definition, in which all legs must be equidistant.
+#   - broken butterfly not supported.
 
-    legs = None
+def get_legs(
+    mode:   str, 
+    width:  int
+) -> tuple[int, int]:
+
+    legs        = None
 
     if mode == "cal":
 
         legs = ( 
             ( 0, -1 ),
-            ( 1,  1 ) 
+            ( width,  1 ) 
         )
 
     elif mode == "rcal":
@@ -178,7 +195,7 @@ def get_legs(mode: str):
         legs = (
 
             ( 0,  1 ),
-            ( 1, -1 )
+            ( width, -1 )
 
         )
 
@@ -186,26 +203,26 @@ def get_legs(mode: str):
 
         legs = ( 
             ( 0,  1 ), 
-            ( 1, -2 ),
-            ( 2,  1 ) 
+            ( width, -2 ),
+            ( 2 * width,  1 ) 
         )
 
     elif mode == "dfly":
 
         legs = ( 
             ( 0,  1 ),
-            ( 1, -3 ),
-            ( 2,  3 ), 
-            ( 3, -1 ) 
+            ( width, -3 ),
+            ( 2 * width,  3 ), 
+            ( 3 * width, -1 ) 
         )
 
     elif mode == "cond":
 
         legs = (
             ( 0,  1 ),
-            ( 1, -1 ),
-            ( 2, -1),
-            ( 3,  1 )
+            ( width, -1 ),
+            ( 2 * width, -1),
+            ( 3 * width,  1 )
         )
 
     return legs
@@ -226,13 +243,14 @@ def get_seasons(term_day: List, legs: List[tuple]):
 
 
 def by_season(
-    term_days:  List, 
-    legs:       List[tuple], 
-    seasons:    set
+    term_days:      List, 
+    legs:           List[tuple],
+    total_width:    int, 
+    seasons:        set
 ):
 
     latest  = term_days[-1]
-    lim     = len(latest) - len(legs) + 1
+    lim     = len(latest) - total_width
 
     res = { 
         season : {}
@@ -241,7 +259,7 @@ def by_season(
 
     for day in term_days:
 
-        for i in range(min(len(day) - len(legs) + 1, lim)):
+        for i in range(min(len(day) - total_width, lim)):
 
             if MAX_DTE >= day[i][term.dte] >= MIN_DTE:
             
@@ -261,9 +279,10 @@ def by_season(
 
 
 def by_sequence(
-    term_days:  List,
-    legs:       List[tuple],
-    sequences:  set
+    term_days:      List,
+    legs:           List[tuple],
+    total_width:    int,
+    sequences:      set
 ):
 
     res = {
@@ -275,7 +294,7 @@ def by_sequence(
     
         for i in sequences:
 
-            if  i + len(legs) < len(day) and \
+            if  i + total_width < len(day) and \
                 MAX_DTE >= day[i][term.dte] >= MIN_DTE:
                 
                     s       = get_spread_row(day, i, legs)
