@@ -1,76 +1,70 @@
 {
     "trades": {
-        "CL": {
-            "fly:1": [ "MNQ", "NQU" ],
-            "cal:1": [ "MN", "NQ", "QU", "UV" ]
-        },
         "HO": {
-            "fly:1": [ "NQU", "QUV" ],
-            "cal:1": [ "MN", "NQ" ]
-            
-        },
-        "LE": {
-            "fly:1": [ "GJM" ]
+            "rcal:1": [ "XZ", "NQ" ]
         },
         "ZC": {
-            "cal:1": [ "NU" ]
+            "rcal:1": [ "HK", "NU" ]
+        },
+        "HE": {
+            "rcal:1": [ "ZG" ] 
         }
     },
     "scan": {
         "HO": {
-            "cal:1": [ "all_0:1000" ],
+            "rcal:1": [ "all_0:1000" ],
             "fly:1": [ "all_0:1000" ]
         },
         "CL": {
-            "cal:1": [ "all_0:1000" ],
+            "rcal:1": [ "all_0:1000" ],
             "fly:1": [ "all_0:1000" ]
         },
         "ZW": {
-            "cal:1": [ "all_sea" ],
+            "rcal:1": [ "all_sea" ],
             "fly:1": [ "all_sea" ]
         },
         "KE": {
-            "cal:1": [ "all_sea" ],
+            "rcal:1": [ "all_sea" ],
             "fly:1": [ "all_sea" ]
         },
         "ZS": {
-            "cal:1": [ "all_sea" ],
+            "rcal:1": [ "all_sea" ],
             "fly:1": [ "all_sea" ]
         },
         "ZL": {
-            "cal:1": [ "all_0:1000" ],
+            "rcal:1": [ "all_0:1000" ],
             "fly:1": [ "all_0:1000" ]
         },
         "ZM": {
-            "cal:1": [ "all_0:1000" ],
+            "rcal:1": [ "all_0:1000" ],
             "fly:1": [ "all_0:1000" ]
         },
         "ZC": {
-            "cal:1": [ "all_sea"],
+            "rcal:1": [ "all_sea"],
             "fly:1": [ "all_sea" ]
         },
         "HE": {
-            "cal:1": [ "all_sea" ],
+            "rcal:1": [ "all_sea" ],
             "fly:1": [ "all_sea" ]
         },
         "LE": {
-            "cal:1": [ "all_sea" ],
+            "rcal:1": [ "all_sea" ],
             "fly:1": [ "all_sea" ]
         },
         "ZO": {
-            "cal:1": [ "all_sea" ]
+            "rcal:1": [ "all_sea" ]
         },
         "VX": {
             "cal:1": [ "all_0:365" ],
             "fly:1": [ "all_0:365" ]
         },
         "ZQ": {
-            "cal:1": [ "all_0:1000" ],
+            "rcal:1": [ "all_0:1000" ],
             "fly:1": [ "all_0:1000" ],
             "cond:1": [ "all_0:1000" ]
         },
         "GE": {
-            "cal:1": [ "all_0:" ],
+            "rcal:1": [ "all_0:" ],
             "fly:1": [ "all_0:1000" ],
             "cond:1": [ "all_0:1000" ]
         }

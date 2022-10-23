@@ -141,9 +141,9 @@ if __name__ == "__main__":
 
             for mode, defs in defs.items():
 
-                mode_parts  = argv[2].split(":")
-                mode        = mode_parts[1]
-                width       = int(mode_parts[2])
+                mode_parts  = mode.split(":")
+                mode        = mode_parts[0]
+                width       = int(mode_parts[1])
 
                 render(symbol, mode, width, defs, text)
 
