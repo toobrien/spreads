@@ -1,13 +1,23 @@
 {
     "trades": {
         "HO": {
-            "rcal:1": [ "XZ", "NQ" ]
+            "rcal:1": [ "ZF", "NQ" ],
+            "fly:1":  [ "ZFG" ]
+        },
+        "CL": {
+            "fly:1": [ "GHJ" ]
         },
         "ZC": {
             "rcal:1": [ "HK", "NU" ]
         },
         "HE": {
-            "rcal:1": [ "ZG" ] 
+            "rcal:1": [ "VZ", "ZG" ] 
+        }
+    },
+    "ho": {
+        "HO": {
+            "rcal:1": [ "ZF", "FG", "GH", "HJ", "JK", "KM", "MN", "NQ", "QU", "UV" ],
+            "fly:1": [ "ZFG", "FGH", "GHJ", "HJK", "JKM", "KMN", "MNQ", "NQU", "QUV" ]  
         }
     },
     "scan": {

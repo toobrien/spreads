@@ -1,11 +1,12 @@
-from    json            import  loads
-from    plotly.subplots import  make_subplots
-from    sys             import  argv
-from    time            import  time
-from    typing          import  List
-from    util            import  all, add_scatters, add_pdfs, by_season, by_sequence, \
-                                get_db, get_legs, get_term_days, get_spread_ids, \
-                                print_spreads
+from    json                    import  loads
+import  plotly.graph_objects    as      go
+from    plotly.subplots         import  make_subplots
+from    sys                     import  argv
+from    time                    import  time
+from    typing                  import  List
+from    util                    import  all, add_scatters, add_pdfs, by_season, by_sequence, \
+                                        get_db, get_legs, get_term_days, get_spread_ids, \
+                                        print_spreads, spread
 
 
 PLOT_HEIGHT = 400
@@ -93,13 +94,30 @@ def render(
                 plots[plot_count]   =   data
                 plot_count          +=  1
 
+    # generate regression scatter
+
+    ret_plots = []
+
+    for spread_def, data in results.items():
+
+        ret_plots.append(
+            (
+                spread_def,
+                [
+                    ( abs(recs[i][spread.settle]), abs(recs[i][spread.settle] - recs[i - 1][spread.settle]) )
+                    for _, recs in data.items()
+                    for i in range(1, len(recs))
+                ]
+            )
+        )
+
     # generate figure
 
     if not text:
     
         fig = make_subplots(
                 rows = plot_count, 
-                cols = 2,
+                cols = 3,
             )
         
         fig.update_layout(
@@ -113,6 +131,20 @@ def render(
 
             add_scatters(fig, i + 1, per_plot_spreads)
             add_pdfs(fig, i + 1, per_plot_spreads)
+
+            fig.add_trace(
+                go.Histogram(
+                    {
+                        "x": [ rec[1] for rec in ret_plots[i][1] ],
+                        "name": "".join(ret_plots[i][0]) + " returns",
+                        "histnorm": "probability density",
+                        "marker": { "color": "blue" },
+                        "cumulative": { "enabled": True }
+                    }
+                ),
+                row = i + 1,
+                col = 3
+            )
 
         fig.show()
 
