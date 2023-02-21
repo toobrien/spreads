@@ -32,6 +32,9 @@ MONTHS = {
     "Z": 12
 }
 
+
+# ----- classes -----
+
 class term(IntEnum):
 
     date        = 0
@@ -54,6 +57,20 @@ class leg(IntEnum):
     idx     = 0
     ratio   = 1
 
+
+class spread_wrapper:
+
+
+    group_id        = None
+    id              = None
+    data            = None
+
+
+    def __init__(self, group_id, id, data):
+
+        self.group_id   = group_id
+        self.id         = id
+        self.data       = data
 
 # ----- db -----
 

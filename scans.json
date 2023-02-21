@@ -1,0 +1,9 @@
+{
+    "ho_cal_1": {
+        "symbol":       "HO",
+        "mode":         "cal",
+        "width":        1,
+        "aggregate_by": "sea",
+        "max_months":   12
+    }
+}
