@@ -1,5 +1,7 @@
 {
-    "db_path": "../data/futures.db",
-    "min_dte": 0,
-    "max_dte": 3000
+    "db_path":      "../data/futures.db",
+    "min_dte":      0,
+    "max_dte":      3000,
+    "start_date":   "1900-01-01",
+    "end_date":     "2050-01-01"
 }
