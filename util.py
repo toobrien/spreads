@@ -17,8 +17,8 @@ SCATTER_COL = 1
 PDF_COL     = 2
 HISTORY     = 20
 
-BEGIN       = "1900-01-01"
-END         = "2050-01-01"
+BEGIN       = CONFIG["start_date"]
+END         = CONFIG["end_date"]
 TERM_DAYS   = {}
 
 MONTHS = {

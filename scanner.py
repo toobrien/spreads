@@ -9,7 +9,13 @@ def perform_scan(title, definition):
 
     spread_groups = get_active_spread_groups(**definition)
 
-    pass
+    for spread_group in spread_groups:
+
+        for spread_id in spread_group.active_ids:
+        
+            rows = spread_group.get_spread_rows(spread_id)
+
+            pass
 
     
 
