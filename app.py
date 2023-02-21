@@ -4,16 +4,12 @@ from    plotly.subplots         import  make_subplots
 from    sys                     import  argv
 from    time                    import  time
 from    typing                  import  List
-from    util                    import  all, add_scatters, add_pdfs, by_season, by_sequence, \
-                                        get_db, get_legs, get_term_days, get_spread_ids, \
-                                        print_spreads, spread
+from    util                    import  all, add_scatters, add_pdfs, BEGIN, by_season, \
+                                        by_sequence, DB, END, get_legs, get_term_days, \
+                                        get_spread_ids, print_spreads, spread, TERM_DAYS
 
 
 PLOT_HEIGHT = 400
-BEGIN       = "1900-01-01"
-END         = "2050-01-01"
-TERM_DAYS   = {}
-DB          = get_db()
 
 def render(
     symbol: str,
@@ -25,7 +21,7 @@ def render(
 
     if symbol not in TERM_DAYS:
 
-        TERM_DAYS[symbol] = get_term_days(DB, symbol, BEGIN, END)
+        TERM_DAYS[symbol] = get_term_days(symbol)
 
     term_days           = TERM_DAYS[symbol]
     today               = term_days[-1]

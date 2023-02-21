@@ -17,6 +17,10 @@ SCATTER_COL = 1
 PDF_COL     = 2
 HISTORY     = 20
 
+BEGIN       = "1900-01-01"
+END         = "2050-01-01"
+TERM_DAYS   = {}
+
 MONTHS = {
     "F": 1,
     "G": 2,
@@ -58,6 +62,44 @@ class leg(IntEnum):
     ratio   = 1
 
 
+class spread_group:
+
+
+    active_ids  = None
+    group_id    = None
+    mu          = None
+    rows        = None
+    sigma       = None
+    spread_ids  = None
+
+
+    def __init__(self, active_ids, group_id, rows, spread_ids):
+
+        self.active_ids = active_ids
+        self.group_id   = group_id
+        self.spread_ids = spread_ids
+        self.rows       = rows
+
+        settles = [ row[spread.settle] for row in self.rows]
+
+        self.mu     = mean(settles)
+        self.sigma  = stdev(settles)
+
+    
+    def get_spread_rows(self, spread_id):
+
+        return [
+            row
+            for row in self.rows
+            if row[spread.id] == spread_id
+        ]
+
+
+    def get_all_rows(self):
+
+        return self.rows
+
+
 class spread_wrapper:
 
 
@@ -86,14 +128,9 @@ def get_db() -> Connection:
     return db
 
 
-def get_term_days(
-    db:     Connection, 
-    symbol: str, 
-    begin:  str, 
-    end:    str
-) -> List[List]:
+def get_term_days(symbol: str) -> List[List]:
 
-    cur = db.cursor()
+    cur = DB.cursor()
 
     terms = cur.execute(f'''
         SELECT DISTINCT
@@ -104,7 +141,7 @@ def get_term_days(
             CAST(julianday(to_date) - julianday(date) AS INT)
         FROM ohlc INNER JOIN metadata USING(contract_id)
         WHERE name = "{symbol}"
-        AND date BETWEEN "{begin}" AND "{end}"
+        AND date BETWEEN "{BEGIN}" AND "{END}"
         ORDER BY date ASC, year ASC, month ASC;
     ''').fetchall()
 
@@ -385,6 +422,79 @@ def filter_by_sea(term_days: List[List], contracts: Tuple):
     return res
 
 
+def get_active_spread_groups(
+    symbol:         str,
+    mode:           str,
+    width:          int,
+    aggregate_by:   str,
+    max_months:     int
+):
+
+    if symbol not in TERM_DAYS:
+
+        TERM_DAYS[symbol] = get_term_days(symbol)
+
+    term_days   = TERM_DAYS[symbol]
+    today       = term_days[-1][:max_months]
+    legs        = get_legs(mode, width)
+    total_width = legs[-1][0]
+    todays_ids  = get_spread_ids(today, legs, total_width)
+
+    spread_group_source_data = None
+
+    if aggregate_by == "sea":
+
+        seasons = {
+            tuple(
+                t[0] 
+                for t in spread_id
+            )
+            for spread_id in todays_ids
+        }
+
+        spread_group_source_data = by_season(term_days, legs, total_width, seasons)
+    
+    else:
+
+        sequences = {
+                i for i in range(len(today) - total_width)
+            }
+
+        spread_group_source_data = by_sequence(term_days, legs, total_width, sequences)
+
+    spread_groups = []
+
+    for group_id, group_data in spread_group_source_data.items():
+
+        active_ids = [
+            spread_id
+            for spread_id, _ in group_data.items()
+            if spread_id in todays_ids
+        ]
+
+        spread_rows = [
+            row
+            for _, rows in group_data.items()
+            for row in rows
+        ]
+
+        spread_ids = [
+            spread_id
+            for spread_id, _ in group_data.items()
+        ]
+
+        spread_groups.append(
+            spread_group(
+                active_ids,
+                group_id,
+                spread_rows,
+                spread_ids
+            )
+        )
+
+    return spread_groups
+
+
 # ----- plotting -----
 
 
@@ -553,3 +663,9 @@ def print_spreads(symbol: str, mode: str, plots: dict):
             print("".join(rec))
 
     print("\n")
+
+
+# ----- initialize_db -----
+
+
+DB = get_db()
