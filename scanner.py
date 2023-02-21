@@ -5,7 +5,7 @@ from util import    get_active_spread_groups
 SCANS = loads(open("./scans.json", "r").read())
 
 
-def perform_scan(title, definition):
+def perform_scan(title, definition, criteria):
 
     spread_groups = get_active_spread_groups(**definition)
 
@@ -21,6 +21,6 @@ def perform_scan(title, definition):
 
 if __name__ == "__main__":
 
-    for title, definition in SCANS.items():
+    for title, scan in SCANS.items():
 
-        perform_scan(title, definition)
+        perform_scan(title, scan["definition"], scan["criteria"])
