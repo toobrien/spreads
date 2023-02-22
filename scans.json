@@ -1,10 +1,28 @@
 {
     "ho_cal_1": {
-        "criteria":   {},
+        "criteria": [
+            "zscore",
+            "dte",
+            "sigma:20"
+        ],
         "definition": {
             "symbol":       "HO",
             "mode":         "cal",
             "width":        1,
+            "aggregate_by": "sea",
+            "max_months":   12
+        }
+    },
+    "ho_cal_3": {
+        "criteria": [
+            "zscore",
+            "dte",
+            "sigma:20"
+        ],
+        "definition": {
+            "symbol":       "HO",
+            "mode":         "cal",
+            "width":        3,
             "aggregate_by": "sea",
             "max_months":   12
         }

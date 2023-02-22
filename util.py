@@ -182,11 +182,13 @@ def get_spread_row(term_day: List, i: int, legs: List):
         for l in legs
     )
     
+    high    = 0
     settle  = 0
+    low     = 0
     
     for l in legs:
 
-        settle += term_day[i + l[leg.idx]][term.settle] * l[leg.ratio] 
+        settle += term_day[i + l[leg.idx]][term.settle] * l[leg.ratio]
 
     dte     = term_day[i][term.dte]
     spread  = [ date, id, settle, dte ]
