@@ -100,7 +100,7 @@ def render(
             (
                 spread_def,
                 [
-                    ( abs(recs[i][spread.settle]), abs(recs[i][spread.settle] - recs[i - 1][spread.settle]) )
+                    ( recs[i][spread.settle], recs[i][spread.settle] - recs[i - 1][spread.settle] )
                     for _, recs in data.items()
                     for i in range(1, len(recs))
                 ]
