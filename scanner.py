@@ -1,5 +1,6 @@
 from json       import loads
 from statistics import stdev
+from sys        import argv
 from util       import get_active_spread_groups, spread
 
 
@@ -148,7 +149,7 @@ def perform_scan(title, definition, criteria):
 
     for spread_group in spread_groups:
 
-        active_ids = sorted(spread_group.active_ids, key = lambda i: i[0])
+        active_ids = sorted(spread_group.active_ids, key = lambda i: (i[0][1], i[0][0]))
 
         for spread_id in active_ids:
 
@@ -184,8 +185,18 @@ def perform_scan(title, definition, criteria):
 
 if __name__ == "__main__":
 
-    for title, scan in SCANS.items():
+    titles = None
 
-        perform_scan(title, scan["definition"], scan["criteria"])
+    if len(argv) == 1:
+
+        titles = [ title for title, _ in SCANS.items() ]
+    
+    else:
+
+        titles = argv[1:]
+
+    for title in titles:
+
+        perform_scan(title, SCANS[title]["definition"], SCANS[title]["criteria"])
 
         print("\n")
