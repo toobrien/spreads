@@ -100,12 +100,16 @@ def sigma(spread_id, spread_group, lag):
 
     spread_rows = spread_group.get_spread_rows(spread_id)
     lag         = int(lag)
-    settles     = [ row[spread.settle] for row in spread_rows ]
+    d_settle    = [ 0.0 for _ in spread_rows]
     res         = [ None for _ in spread_rows ]
 
-    for i in range(lag, len(settles)):
+    for i in range(1, len(d_settle)):
 
-        res[i] = stdev(settles[i - lag:i])
+        d_settle[i] = spread_rows[i][spread.settle] - spread_rows[i -1][spread.settle]
+                    
+    for i in range(lag, len(d_settle)):
+
+        res[i] = stdev(d_settle[i - lag:i])
 
     return res
 
@@ -125,11 +129,11 @@ def zscore(spread_id, spread_group, params = None):
 
 
 CRITERIA_FUNCS = {
-    #"atr":          atr,
+    #"atr":         atr,
     "dte":          dte,
-    #"range_score":  range_score,
+    #"range_score": range_score,
     "sigma":        sigma,
-    "zscore":      zscore
+    "zscore":       zscore
 }
 
 
@@ -140,9 +144,13 @@ def perform_scan(title, definition, criteria):
     print(title.ljust(15))
     print("".ljust(15) + "".join([ crit.ljust(15) for crit in criteria ]) + "\n")
 
+    spread_groups = sorted(spread_groups, key = lambda g: g.group_id[0])
+
     for spread_group in spread_groups:
 
-        for spread_id in spread_group.active_ids:
+        active_ids = sorted(spread_group.active_ids, key = lambda i: i[0])
+
+        for spread_id in active_ids:
 
             printable_id = [ leg[0] for leg in spread_id ] # months
             printable_id.append(f" {spread_id[0][1][2:]}") # year
@@ -166,7 +174,7 @@ def perform_scan(title, definition, criteria):
 
                 if isinstance(latest, float):
 
-                    latest = f"{latest:0.2f}"
+                    latest = f"{latest:0.3f}"
 
                 output += f"{latest}".ljust(15)
 
