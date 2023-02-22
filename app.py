@@ -133,9 +133,7 @@ def render(
                     {
                         "x": [ rec[1] for rec in ret_plots[i][1] ],
                         "name": "".join(ret_plots[i][0]) + " returns",
-                        "histnorm": "probability density",
-                        "marker": { "color": "blue" },
-                        "cumulative": { "enabled": True }
+                        "marker": { "color": "blue" }
                     }
                 ),
                 row = i + 1,
