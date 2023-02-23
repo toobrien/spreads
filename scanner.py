@@ -4,7 +4,8 @@ from sys        import argv
 from util       import get_active_spread_groups, spread
 
 
-SCANS = loads(open("./scans.json", "r").read())
+SCANS       = loads(open("./scans.json", "r").read())
+COL_WIDTH   = 20
 
 
 def moving_average(src, lag):
@@ -52,49 +53,31 @@ def dte(spread_id, spread_group, params = None):
     return [ row[spread.dte] for row in spread_rows]
 
 
-# Not implemented: no consistent high / low data
-'''
-def range_score(spread_id, spread_group, lags):
+def range_score(spread_id, spread_group, lag):
 
     spread_rows = spread_group.get_spread_rows(spread_id)
-    lags        = lags.split(",")
-    long        = int(lags[0])
-    short       = int(lags[1])
-    ma_len      = int(lags[2])
+    lag         = int(lag)
+    settles     = [ row[spread.settle] for row in spread_rows ]
+    d_settles   = [ None for row in spread_rows ]
+    sigma       = [ None for row in spread_rows ]
+    res         = [ None for row in spread_rows ]
 
-    highs       = [ row[spread.high] for row in spread_rows]
-    lows        = [ row[spread.low] for row in spread_rows]
+    if len(settles) >= lag:
 
-    long_max_highs  = [ None for _ in highs ]
-    long_min_lows   = [ None for _ in highs ]
-    long_rngs       = [ None for _ in highs ]
+        for i in range(1, len(settles)):
+
+            d_settles = [ 
+                            settles[i] - settles[i - 1]
+                            for i in range(len(settles))
+                        ]
+
+        for i in range(lag, len(d_settles)):
+
+            sigma[i]    = stdev(d_settles[i - lag:i])
+            rng         = max(settles[i - lag:i]) - min(settles[i - lag:i])
+            res[i]      = sigma[i] / rng if rng != 0 else 0 
     
-    short_max_highs = [ None for _ in highs ]
-    short_min_lows  = [ None for _ in highs ]
-    short_rngs      = [ None for _ in highs ]
-
-
-    for i in range(long, len(highs)):
-
-        long_max_highs[i]   = max(highs[i - long:i])
-        long_min_lows[i]    = min(lows[i - long:i]) 
-        long_rngs[i]        = long_max_highs[i] - long_min_lows[i]
-
-    for i in range(short, len(highs)):
-
-        short_max_highs[i]  = max(highs[i - short:i])
-        short_min_lows[i]   = min(lows[i - short:i])
-        short_rngs[i]       = short_max_highs[i] - short_min_lows[i]
-                        
-    pct = [
-        short_rngs[i] / long_rngs[i]
-        for i in range(long, len(long_rngs))
-    ]
-
-    res = moving_average(pct, ma_len)
-
     return res
-'''
 
 
 def range_pct(spread_id, spread_group, lag):
@@ -178,7 +161,7 @@ def z_settle(spread_id, spread_group, params = None):
 CRITERIA_FUNCS = {
     #"atr":         atr,
     "dte":          dte,
-    #"range_score": range_score,
+    "range_score":  range_score,
     "range_pct":    range_pct,
     "sigma":        sigma,
     "z_chg":        z_chg,
@@ -190,8 +173,13 @@ def perform_scan(title, definition, criteria):
 
     spread_groups = get_active_spread_groups(**definition)
 
-    print(title.ljust(15))
-    print("".ljust(15) + "".join([ crit.ljust(15) for crit in criteria ]) + "\n")
+    print(title.ljust(COL_WIDTH))
+    print(
+            "".ljust(COL_WIDTH) + 
+            "".join(
+                [ crit.ljust(COL_WIDTH) for crit in criteria ]
+            ) + "\n"
+        )
 
     spread_groups = sorted(spread_groups, key = lambda g: g.group_id[0])
 
@@ -204,7 +192,7 @@ def perform_scan(title, definition, criteria):
             printable_id = [ leg[0] for leg in spread_id ] # months
             printable_id.append(f" {spread_id[0][1][2:]}") # year
 
-            output = "".join(printable_id).ljust(15)
+            output = "".join(printable_id).ljust(COL_WIDTH)
 
             for crit in criteria:
 
@@ -225,7 +213,7 @@ def perform_scan(title, definition, criteria):
 
                     latest = f"{latest:0.3f}"
 
-                output += f"{latest}".ljust(15)
+                output += f"{latest}".ljust(COL_WIDTH)
 
             print(output)
 
