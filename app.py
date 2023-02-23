@@ -29,6 +29,7 @@ def render(
     total_width         = legs[-1][0]
     todays_spread_ids   = get_spread_ids(today, legs, total_width)
     plots               = {}
+    ret_plots           = []
     plot_count          = 0
 
     for d in defs:
@@ -90,22 +91,20 @@ def render(
                 plots[plot_count]   =   data
                 plot_count          +=  1
 
-    # generate regression scatter
+        # generate regression scatter
 
-    ret_plots = []
+        for spread_def, data in results.items():
 
-    for spread_def, data in results.items():
-
-        ret_plots.append(
-            (
-                spread_def,
-                [
-                    ( recs[i][spread.settle], recs[i][spread.settle] - recs[i - 1][spread.settle] )
-                    for _, recs in data.items()
-                    for i in range(1, len(recs))
-                ]
+            ret_plots.append(
+                (
+                    spread_def,
+                    [
+                        ( recs[i][spread.settle], recs[i][spread.settle] - recs[i - 1][spread.settle] )
+                        for _, recs in data.items()
+                        for i in range(1, len(recs))
+                    ]
+                )
             )
-        )
 
     # generate figure
 
