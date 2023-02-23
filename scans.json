@@ -1,7 +1,7 @@
 {
     "criteria": [
         "z_settle",
-        "z_chg",
+        "z_chg:20",
         "dte",
         "range_pct:20",
         "sigma:20"
