@@ -12,6 +12,94 @@
                 "fly":  [ 1 ]
             },
             "aggregate_by": "sea",
+            "max_months": 16
+        },
+        "RB": {
+            "modes": {
+                "rcal": [ 1, 3, 6 ],
+                "fly":  [ 1 ]
+            },
+            "aggregate_by": "sea",
+            "max_months": 16
+        },
+        "NG": {
+            "modes": {
+                "rcal": [ 1, 3, 6 ],
+                "fly":  [ 1, 3 ]
+            },
+            "aggregate_by": "sea",
+            "max_months": 24
+        },
+        "CL": {
+            "modes": {
+                "rcal": [ 1, 3, 6 ],
+                "fly":  [ 1, 3 ]
+            },
+            "aggregate_by": "sea",
+            "max_months": 24
+        },
+        "ZC": {
+            "modes": {
+                "rcal": [ 1, 3, 6 ],
+                "fly":  [ 1 ]
+            },
+            "aggregate_by": "sea",
+            "max_months": 12
+        },
+        "ZW": {
+            "modes": {
+                "rcal": [ 1, 3, 6 ],
+                "fly":  [ 1 ]
+            },
+            "aggregate_by": "sea",
+            "max_months": 12
+        },
+        "KE": {
+            "modes": {
+                "rcal": [ 1, 3, 6 ],
+                "fly":  [ 1 ]
+            },
+            "aggregate_by": "sea",
+            "max_months": 12
+        },
+        "ZS": {
+            "modes": {
+                "rcal": [ 1, 3, 6 ],
+                "fly":  [ 1 ]
+            },
+            "aggregate_by": "sea",
+            "max_months": 12
+        },
+        "ZM": {
+            "modes": {
+                "rcal": [ 1, 3, 6 ],
+                "fly":  [ 1 ]
+            },
+            "aggregate_by": "sea",
+            "max_months": 12
+        },
+        "ZL": {
+            "modes": {
+                "rcal": [ 1, 3, 6 ],
+                "fly":  [ 1 ]
+            },
+            "aggregate_by": "sea",
+            "max_months": 12
+        },
+        "HE": {
+            "modes": {
+                "rcal": [ 1, 3, 6 ],
+                "fly":  [ 1 ]
+            },
+            "aggregate_by": "sea",
+            "max_months": 12
+        },
+        "LE": {
+            "modes": {
+                "rcal": [ 1, 3, 6 ],
+                "fly":  [ 1 ]
+            },
+            "aggregate_by": "sea",
             "max_months": 12
         }
     }
