@@ -1,5 +1,5 @@
 from json       import loads
-from statistics import stdev
+from statistics import mean, stdev
 from sys        import argv
 from util       import get_active_spread_groups, spread
 
@@ -136,7 +136,26 @@ def sigma(spread_id, spread_group, lag):
     return res
 
 
-def zscore(spread_id, spread_group, params = None):
+def z_chg(spread_id, spread_group, params = None):
+
+    spread_rows = spread_group.get_spread_rows(spread_id)
+    d_settle    = [ 
+                    spread_rows[i][spread.settle] - spread_rows[i - 1][spread.settle]
+                    for i in range(1, len(spread_rows)) 
+                ]
+    
+    mu      = mean(d_settle)
+    sigma   = stdev(d_settle)
+
+    res = [
+        (chg - mu) / sigma
+        for chg in d_settle
+    ]
+
+    return res
+
+
+def z_settle(spread_id, spread_group, params = None):
 
     spread_rows = spread_group.get_spread_rows(spread_id)
     mu          = spread_group.mu
@@ -156,7 +175,8 @@ CRITERIA_FUNCS = {
     #"range_score": range_score,
     "range_pct":    range_pct,
     "sigma":        sigma,
-    "zscore":       zscore
+    "z_chg":        z_chg,
+    "z_settle":     z_settle
 }
 
 
