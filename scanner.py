@@ -97,6 +97,27 @@ def range_score(spread_id, spread_group, lags):
 '''
 
 
+def range_pct(spread_id, spread_group, lag):
+
+    spread_rows = spread_group.get_spread_rows(spread_id)
+    lag         = int(lag)
+    settles     = [ row[spread.settle] for row in spread_rows ]
+    res         = [ 0 for row in spread_rows ]
+
+    if len(settles) >= lag:
+
+        for i in range(lag, len(settles)):
+
+            max_settle = max(settles[i - lag:i])
+            min_settle = min(settles[i - lag:i])
+
+            rng = max_settle - min_settle
+
+            res[i] = (settles[i] - min_settle) / rng if rng != 0 else 0
+
+    return res
+
+
 def sigma(spread_id, spread_group, lag):
 
     spread_rows = spread_group.get_spread_rows(spread_id)
@@ -133,6 +154,7 @@ CRITERIA_FUNCS = {
     #"atr":         atr,
     "dte":          dte,
     #"range_score": range_score,
+    "range_pct":    range_pct,
     "sigma":        sigma,
     "zscore":       zscore
 }
@@ -185,18 +207,51 @@ def perform_scan(title, definition, criteria):
 
 if __name__ == "__main__":
 
-    titles = None
+    criteria = SCANS["criteria"]
+    symbols  = SCANS["symbols"]
 
-    if len(argv) == 1:
+    if len(argv) > 1:
 
-        titles = [ title for title, _ in SCANS.items() ]
+        definitions = argv[1:]
+
+        for definition in definitions:
+
+            parts = definition.split(":")
+
+            symbol          = parts[0]
+            mode            = parts[1]
+            width           = int(parts[2])
+            aggregate_by    = parts[3]
+            max_months      = int(parts[4])
+
+            definition = {
+                "symbol":       symbol,
+                "mode":         mode,
+                "width":        width,
+                "aggregate_by": aggregate_by,
+                "max_months":   max_months
+            }
+
+            perform_scan(f"{parts[0]} {mode}:{width}", definition, criteria)
+
+            print("\n")
     
-    else:
+    else:    
 
-        titles = argv[1:]
+        for symbol, params in symbols.items():
 
-    for title in titles:
+            for mode, widths in params["modes"].items():
 
-        perform_scan(title, SCANS[title]["definition"], SCANS[title]["criteria"])
+                for width in widths:
 
-        print("\n")
+                    definition = {
+                        "symbol":       symbol,
+                        "mode":         mode,
+                        "width":        width,
+                        "aggregate_by": params["aggregate_by"],
+                        "max_months":   params["max_months"]
+                    }
+
+                    perform_scan(f"{symbol} {mode}:{width}", definition, criteria)
+
+                    print("\n")
