@@ -210,7 +210,7 @@ def perform_scan(title, definition, criteria):
                 res     = CRITERIA_FUNCS[func](spread_id, spread_group, params)
 
                 if res:
-                    
+
                     latest  = res[-1]
 
                     if isinstance(latest, float):
@@ -218,6 +218,10 @@ def perform_scan(title, definition, criteria):
                         latest = f"{latest:0.3f}"
 
                     output += f"{latest}".ljust(COL_WIDTH)
+                
+                else:
+
+                    output += "None".ljust(COL_WIDTH)
 
             print(output)
 
