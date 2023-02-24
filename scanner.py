@@ -163,8 +163,7 @@ def z_settle(spread_id, spread_group, params = None):
 CRITERIA_FUNCS = {
     #"atr":         atr,
     "dte":          dte,
-    "range_score":  rng_score,
-    "range_pct":    range_pct,
+    "rng_score":    rng_score,
     "sigma":        sigma,
     "z_chg":        z_chg,
     "z_settle":     z_settle
