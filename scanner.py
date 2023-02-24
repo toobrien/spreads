@@ -53,16 +53,17 @@ def dte(spread_id, spread_group, params = None):
     return [ row[spread.dte] for row in spread_rows]
 
 
-def range_score(spread_id, spread_group, lag):
+def range_score(spread_id, spread_group, lags):
 
     spread_rows = spread_group.get_spread_rows(spread_id)
-    lag         = int(lag)
+    lags        = lags.split(",")
+    short_lag   = int(lags[0])
+    long_lag    = int(lags[1])
     settles     = [ row[spread.settle] for row in spread_rows ]
-    d_settles   = [ None for row in spread_rows ]
-    sigma       = [ None for row in spread_rows ]
+    sigmas      = [ None for row in spread_rows ]
     res         = [ None for row in spread_rows ]
 
-    if len(settles) >= lag:
+    if len(settles) >= long_lag:
 
         for i in range(1, len(settles)):
 
@@ -71,11 +72,12 @@ def range_score(spread_id, spread_group, lag):
                             for i in range(len(settles))
                         ]
 
-        for i in range(lag, len(d_settles)):
+        sigmas = sigma(spread_id, spread_group, short_lag)
 
-            sigma[i]    = stdev(d_settles[i - lag:i])
-            rng         = max(settles[i - lag:i]) - min(settles[i - lag:i])
-            res[i]      = sigma[i] / rng if rng != 0 else 0 
+        for i in range(long_lag, len(settles)):
+
+            rng         = max(settles[i - long_lag:i]) - min(settles[i - long_lag:i])
+            res[i]      = sigmas[i] / rng if rng != 0 else 0 
     
     return res
 
@@ -110,7 +112,7 @@ def sigma(spread_id, spread_group, lag):
 
     for i in range(1, len(d_settle)):
 
-        d_settle[i] = spread_rows[i][spread.settle] - spread_rows[i -1][spread.settle]
+        d_settle[i] = spread_rows[i][spread.settle] - spread_rows[i-1][spread.settle]
                     
     for i in range(lag, len(d_settle)):
 

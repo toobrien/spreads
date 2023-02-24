@@ -3,7 +3,7 @@
         "z_settle",
         "z_chg:20",
         "dte",
-        "range_score:125",
+        "range_score:20,120",
         "sigma:20"
     ],
     "symbols": {
