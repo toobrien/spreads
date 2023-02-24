@@ -53,7 +53,7 @@ def dte(spread_id, spread_group, params = None):
     return [ row[spread.dte] for row in spread_rows]
 
 
-def range_score(spread_id, spread_group, lags):
+def rng_score(spread_id, spread_group, lags):
 
     spread_rows = spread_group.get_spread_rows(spread_id)
     lags        = lags.split(",")
@@ -163,7 +163,7 @@ def z_settle(spread_id, spread_group, params = None):
 CRITERIA_FUNCS = {
     #"atr":         atr,
     "dte":          dte,
-    "range_score":  range_score,
+    "range_score":  rng_score,
     "range_pct":    range_pct,
     "sigma":        sigma,
     "z_chg":        z_chg,
