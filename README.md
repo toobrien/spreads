@@ -74,7 +74,7 @@ The example above regresses the july/august heating oil spread onto the july leg
     
     'dfly': +1, -3, +3, -1
 
-- for use with [futures_db](https://github.com/toobrien/futures_db)
+- for use with [futures_db_v2](https://github.com/toobrien/futures_db_v2)
 - active spreads have various colors, while those expired are progressively fainter blue
 - adjust min/max dte to get the best default fit for your scatter plots
 - the histogram is in probability density format
