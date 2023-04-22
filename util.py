@@ -117,12 +117,20 @@ class spread_wrapper:
 # ----- db -----
 
 
-def get_term_days(symbol: str):
+def get_term_days(symbol: str, start: str = None, end: str = None):
     
+    if not start:
+
+        start = BEGIN
+
+    if not end:
+
+        end = END
+
     filtered = DB.filter(
                                 (pl.col("name") == symbol) &
-                                (pl.col("date") < END)     & 
-                                (pl.col("date") >= BEGIN)
+                                (pl.col("date") < start)   & 
+                                (pl.col("date") >= end)
                             ).sort(
                                 [ "date", "year", "month" ]
                             )

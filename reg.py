@@ -3,10 +3,9 @@ from math       import log
 from statistics import mean
 from sys        import argv
 from typing     import List
-from util       import filter_by_sea, get_db, get_term_days, term
+from util       import filter_by_sea, get_term_days, term
 
 
-DB          = get_db()
 DATE_FMT    = "%Y-%m-%d"
 
 
@@ -81,7 +80,7 @@ def app(
     num_records:    int
 ):
 
-    term_days   = get_term_days(DB, symbol, start, end)
+    term_days   = get_term_days(symbol, start, end)
     filtered    = filter_by_sea(term_days, contracts)
     reg_records = []
 
