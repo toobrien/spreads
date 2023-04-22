@@ -1,5 +1,5 @@
 {
-    "db_path":      "../data/futures.db",
+    "db_path":      "../data_v2/futs.parquet",
     "min_dte":      0,
     "max_dte":      3000,
     "start_date":   "1900-01-01",

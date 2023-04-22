@@ -1,13 +1,14 @@
 from    datetime                import  datetime
 from    enum                    import  IntEnum
 from    json                    import  loads
+import  polars                  as      pl
 import  plotly.graph_objects    as      go
-from    sqlite3                 import  connect, Connection
 from    statistics              import  mean, stdev
 from    typing                  import  List, Tuple
 
 
 CONFIG      = loads(open("./config.json").read())
+DB          = pl.read_parquet(CONFIG["db_path"])
 MIN_DTE     = CONFIG["min_dte"]
 MAX_DTE     = CONFIG["max_dte"]
 YEAR        = datetime.now().year
@@ -16,12 +17,10 @@ MIN_OPACITY = 0.2
 SCATTER_COL = 1
 PDF_COL     = 2
 HISTORY     = 20
-
 BEGIN       = CONFIG["start_date"]
 END         = CONFIG["end_date"]
 TERM_DAYS   = {}
-
-MONTHS = {
+MONTHS      = {
     "F": 1,
     "G": 2,
     "H": 3,
@@ -114,55 +113,44 @@ class spread_wrapper:
         self.id         = id
         self.data       = data
 
+
 # ----- db -----
 
-def get_db() -> Connection:
 
-    db = None
-
-    with open("./config.json") as fd:
-
-        db_path = loads(fd.read())["db_path"]
-        db = connect(db_path)
-
-    return db
-
-
-def get_term_days(symbol: str) -> List[List]:
-
-    cur = DB.cursor()
-
-    terms = cur.execute(f'''
-        SELECT DISTINCT
-            date,
-            month,
-            year,
-            settle,
-            CAST(julianday(to_date) - julianday(date) AS INT)
-        FROM ohlc INNER JOIN metadata USING(contract_id)
-        WHERE name = "{symbol}"
-        AND date BETWEEN "{BEGIN}" AND "{END}"
-        ORDER BY date ASC, year ASC, month ASC;
-    ''').fetchall()
-
-    # group by day
-
-    term_days = []
+def get_term_days(symbol: str):
     
+    filtered = DB.filter(
+                                (pl.col("name") == symbol) &
+                                (pl.col("date") < END)     & 
+                                (pl.col("date") >= BEGIN)
+                            ).sort(
+                                [ "date", "year", "month" ]
+                            )
+    
+    terms = filtered.select(
+                            [
+                                "date",
+                                "month",
+                                "year",
+                                "settle",
+                                "dte"
+                            ]
+                        ).rows()
+    term_days   = []
     cur_date    = terms[0][term.date]
     cur_day     = []
 
-    for r in terms:
+    for row in terms:
 
-        if r[term.date] != cur_date:
-        
+        if row[term.date] != cur_date:
+
             term_days.append(cur_day)
 
-            cur_date    = r[term.date]
+            cur_date    = row[term.date]
             cur_day     = []
-
-        cur_day.append(r)
-
+        
+        cur_day.append(row)
+    
     term_days.append(cur_day)
 
     return term_days
@@ -665,9 +653,3 @@ def print_spreads(symbol: str, mode: str, plots: dict):
             print("".join(rec))
 
     print("\n")
-
-
-# ----- initialize_db -----
-
-
-DB = get_db()

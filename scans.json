@@ -10,7 +10,7 @@
         "HO": {
             "modes": {
                 "rcal": [ 1, 3, 6 ],
-                "fly":  [ 1 ]
+                "fly":  [ 1, 3 ]
             },
             "aggregate_by": "sea",
             "max_months": 16
@@ -18,7 +18,7 @@
         "RB": {
             "modes": {
                 "rcal": [ 1, 3, 6 ],
-                "fly":  [ 1 ]
+                "fly":  [ 1, 3 ]
             },
             "aggregate_by": "sea",
             "max_months": 16
