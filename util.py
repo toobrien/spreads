@@ -129,8 +129,8 @@ def get_term_days(symbol: str, start: str = None, end: str = None):
 
     filtered = DB.filter(
                                 (pl.col("name") == symbol) &
-                                (pl.col("date") < start)   & 
-                                (pl.col("date") >= end)
+                                (pl.col("date") >= start)   & 
+                                (pl.col("date") < end)
                             ).sort(
                                 [ "date", "year", "month" ]
                             )
