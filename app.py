@@ -4,8 +4,8 @@ from    plotly.subplots         import  make_subplots
 from    sys                     import  argv
 from    time                    import  time
 from    typing                  import  List
-from    util                    import  all, add_scatters, add_pdfs, BEGIN, by_season, \
-                                        by_sequence, DB, END, get_legs, get_term_days, \
+from    util                    import  all, add_scatters, add_pdfs, by_season, \
+                                        by_sequence, get_legs, get_term_days,   \
                                         get_spread_ids, print_spreads, spread, TERM_DAYS
 
 
@@ -127,11 +127,14 @@ def render(
             add_scatters(fig, i + 1, per_plot_spreads)
             add_pdfs(fig, i + 1, per_plot_spreads)
 
+            spread_id = ret_plots[i][0]
+            spread_id = ( str(spread_id), ) if type(spread_id) != tuple else spread_id
+
             fig.add_trace(
                 go.Histogram(
                     {
                         "x": [ rec[1] for rec in ret_plots[i][1] ],
-                        "name": "".join(ret_plots[i][0]) + " returns",
+                        "name": "".join(spread_id) + " returns",
                         "marker": { "color": "blue" }
                     }
                 ),

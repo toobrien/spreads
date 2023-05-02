@@ -128,22 +128,23 @@ def get_term_days(symbol: str, start: str = None, end: str = None):
         end = END
 
     filtered = DB.filter(
-                                (pl.col("name") == symbol) &
-                                (pl.col("date") >= start)   & 
-                                (pl.col("date") < end)
-                            ).sort(
-                                [ "date", "year", "month" ]
-                            )
+        (pl.col("name") == symbol)  &
+        (pl.col("date") >= start)   & 
+        (pl.col("date") < end)
+    ).sort(
+        [ "date", "year", "month" ]
+    )
     
     terms = filtered.select(
-                            [
-                                "date",
-                                "month",
-                                "year",
-                                "settle",
-                                "dte"
-                            ]
-                        ).rows()
+        [
+            "date",
+            "month",
+            "year",
+            "settle",
+            "dte"
+        ]
+    ).rows()
+
     term_days   = []
     cur_date    = terms[0][term.date]
     cur_day     = []
