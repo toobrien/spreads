@@ -32,7 +32,7 @@ if __name__ == "__main__":
 
     print(sym)
     print(f"samples:      {len(spreads)}")
-    print(f"backwardated: {len(backwardated) / len(spreads):0.2f}%")
+    print(f"backwardated: {len(backwardated) / len(spreads):0.2f}")
     print(f"spread avg:   {mean(spreads):0.2f}")
     print(f"spread stdev: {stdev(spreads):0.2f}")
 
