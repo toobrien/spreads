@@ -3,12 +3,16 @@ from    enum                    import  IntEnum
 from    json                    import  loads
 import  polars                  as      pl
 import  plotly.graph_objects    as      go
+from    sys                     import  path
 from    statistics              import  mean, stdev
 from    typing                  import  List, Tuple
 
+path.append("..")
+
+from    data.cat_df            import  cat_df
+
 
 CONFIG      = loads(open("./config.json").read())
-DB          = pl.read_parquet(CONFIG["db_path"])
 MIN_DTE     = CONFIG["min_dte"]
 MAX_DTE     = CONFIG["max_dte"]
 YEAR        = datetime.now().year
@@ -127,23 +131,22 @@ def get_term_days(symbol: str, start: str = None, end: str = None):
 
         end = END
 
-    filtered = DB.filter(
-        (pl.col("name") == symbol)  &
-        (pl.col("date") >= start)   & 
-        (pl.col("date") < end)
-    ).sort(
-        [ "date", "year", "month" ]
-    )
-    
-    terms = filtered.select(
-        [
-            "date",
-            "month",
-            "year",
-            "settle",
-            "dte"
-        ]
-    ).rows()
+    terms = cat_df(
+                "futs",
+                symbol,
+                start,
+                end
+            ).sort(
+                [ "date", "year", "month" ]
+            ).select(
+                [
+                    "date",
+                    "month",
+                    "year",
+                    "settle",
+                    "dte"
+                ]
+            ).rows()
 
     term_days   = []
     cur_date    = terms[0][term.date]
@@ -178,10 +181,7 @@ def get_spread_row(term_day: List, i: int, legs: List):
         )
         for l in legs
     )
-    
-    high    = 0
-    settle  = 0
-    low     = 0
+    settle       = 0
     
     for l in legs:
 
