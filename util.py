@@ -1,6 +1,7 @@
 from    datetime                import  datetime
 from    enum                    import  IntEnum
 from    json                    import  loads
+from    numpy                   import  log
 import  polars                  as      pl
 import  plotly.graph_objects    as      go
 from    sys                     import  path
@@ -24,6 +25,7 @@ HISTORY     = 20
 BEGIN       = CONFIG["start_date"]
 END         = CONFIG["end_date"]
 TERM_DAYS   = {}
+LOG         = False
 MONTHS      = {
     "F": 1,
     "G": 2,
@@ -146,7 +148,15 @@ def get_term_days(symbol: str, start: str = None, end: str = None):
                     "settle",
                     "dte"
                 ]
-            ).rows()
+            )
+    
+    if LOG:
+
+        terms = terms.with_columns(terms["settle"].apply(log))
+
+    terms = terms.rows()
+
+
 
     term_days   = []
     cur_date    = terms[0][term.date]
