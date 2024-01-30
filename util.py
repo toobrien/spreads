@@ -25,7 +25,7 @@ HISTORY     = 20
 BEGIN       = CONFIG["start_date"]
 END         = CONFIG["end_date"]
 TERM_DAYS   = {}
-LOG         = False
+LOG         = True
 MONTHS      = {
     "F": 1,
     "G": 2,
@@ -155,8 +155,6 @@ def get_term_days(symbol: str, start: str = None, end: str = None):
         terms = terms.with_columns(terms["settle"].apply(log))
 
     terms = terms.rows()
-
-
 
     term_days   = []
     cur_date    = terms[0][term.date]
@@ -672,3 +670,138 @@ def print_spreads(symbol: str, mode: str, plots: dict):
             print("".join(rec))
 
     print("\n")
+
+
+# ----- continuous contracts -----
+    
+
+CACHE = {}
+
+class r(IntEnum):
+
+    id              = 0
+    date            = 1
+    month           = 3
+    year            = 4
+    settle          = 5
+    dte             = 7
+
+
+def get_groups(
+    symbol: str,
+    start: str,
+    end: str
+):
+    
+    series_id = (symbol, start, end)
+
+    if series_id in CACHE:
+
+        return CACHE[series_id]
+
+    if not start:
+
+        start = BEGIN
+
+    if not end:
+
+        end = END
+
+    terms = cat_df(
+                "futs",
+                symbol,
+                start,
+                end
+            ).sort(
+                [ "date", "year", "month" ]
+            ).select(
+                [
+                    "contract_id",
+                    "date",
+                    "month",
+                    "year",
+                    "settle",
+                    "dte"
+                ]
+            )
+
+    if LOG:
+
+        terms = terms.with_columns(terms["settle"].apply(log))
+
+    terms       = terms.rows()
+    term_days   = []
+    cur_date    = terms[0][term.date]
+    cur_day     = []
+
+    for row in terms:
+
+        if row[term.date] != cur_date:
+
+            term_days.append(cur_day)
+
+            cur_date    = row[term.date]
+            cur_day     = []
+        
+        cur_day.append(row)
+    
+    term_days.append(cur_day)
+
+    CACHE[series_id] = term_days
+
+    return term_days
+
+
+def get_continuous(
+    symbol: str,
+    start:  str,
+    end:    str,
+    term:   int,
+    mode:   str
+):
+
+    groups  = get_groups(symbol, start, end)
+    series  = []
+
+    if mode == "nearest":
+
+        # schwager pg. 280
+
+        series = [ group[term] for group in groups ]
+
+    elif mode == "spread_adjusted":
+
+        # schwager pg. 282; use ratio instead of difference
+
+        cum_adj = 1.0
+
+        for i in range(1, len(groups)):
+
+            try:
+
+                cur         = groups[i][term]
+                prev        = groups[i - 1][term]
+                prev_next   = groups[i - 1][term + 1]
+
+                if cur[r.id] != prev[r.id]:
+
+                    # contract expired yesterday, compute roll factor
+
+                    cum_adj *= prev_next[r.settle] / prev[r.settle]
+
+                rec             = [ field for field in cur ]
+                rec[r.settle]   *= cum_adj
+
+                series.append(rec)
+                
+            except Exception as e:
+
+                # negative price or missing a term
+
+                print(e)
+        
+        for rec in series:
+
+            rec[r.settle] /= cum_adj
+
+    return series
