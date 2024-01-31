@@ -731,16 +731,16 @@ def get_groups(
 
     terms       = terms.rows()
     term_days   = []
-    cur_date    = terms[0][term.date]
+    cur_date    = terms[0][r.date]
     cur_day     = []
 
     for row in terms:
 
-        if row[term.date] != cur_date:
+        if row[r.date] != cur_date:
 
             term_days.append(cur_day)
 
-            cur_date    = row[term.date]
+            cur_date    = row[r.date]
             cur_day     = []
         
         cur_day.append(row)
