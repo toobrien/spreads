@@ -10,11 +10,11 @@ from    util                    import  get_continuous, r
 
 
 def continuous_spread(
-    symbols:        List[str],
-    terms:          List[int],
-    quantitites:    List[int],
-    start:          str,
-    end:            str
+    symbols:    List[str],
+    terms:      List[int],
+    quantities: List[int],
+    start:      str,
+    end:        str
 ):
 
     series = [
@@ -22,19 +22,46 @@ def continuous_spread(
         for i in range(len(symbols))
     ]
 
-    dates = sorted(
-                list(
-                    set(
-                        [ 
-                            rec[r.date]
-                            for recs in series 
-                            for rec in recs
-                        ]
-                    )
-                )
-            )
+    series = [
+        {
+            rec[r.date]: rec
+            for rec in recs
+        }
+        for recs in series
+    ]
+
+    date_idx = set.intersection(*[ set(idx.keys()) for idx in series ])
+    date_idx = sorted(list(date_idx))
     
-    pass
+    spread = {}
+
+    for idx in series:
+
+        for date in date_idx:
+
+            if date not in spread:
+            
+                spread[date] = []
+
+            spread[date].append(idx[date][r.settle])
+
+    spread = [
+                [ date, *settles ]
+                for date, settles in spread.items()
+            ]
+
+    for rec in spread:
+
+        for i in range(1, len(rec)):
+
+            rec[i] = rec[i] * quantities[i - 1]
+    
+    spread = [
+        [ rec[0], sum(rec[1:]) ]
+        for rec in spread
+    ]
+
+    return spread
 
 
 if __name__ == "__main__":
@@ -48,3 +75,16 @@ if __name__ == "__main__":
     terms   = [ int(dfn[1]) for dfn in dfns ]
     qtys    = [ int(dfn[2]) for dfn in dfns ]
     spread  = continuous_spread(symbols, terms, qtys, start, end)
+
+    fig = go.Figure()
+
+    fig.add_trace(
+        go.Scatter(
+            {
+                "x": [ rec[0] for rec in spread ],
+                "y": [ rec[1] for rec in spread ]
+            }
+        )
+    )
+
+    fig.show()

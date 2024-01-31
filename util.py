@@ -25,7 +25,7 @@ HISTORY     = 20
 BEGIN       = CONFIG["start_date"]
 END         = CONFIG["end_date"]
 TERM_DAYS   = {}
-LOG         = True
+LOG         = False
 MONTHS      = {
     "F": 1,
     "G": 2,
@@ -681,10 +681,10 @@ class r(IntEnum):
 
     id              = 0
     date            = 1
-    month           = 3
-    year            = 4
-    settle          = 5
-    dte             = 7
+    month           = 2
+    year            = 3
+    settle          = 4
+    dte             = 5
 
 
 def get_groups(
