@@ -16,12 +16,13 @@ def render(
     mode:   str,
     width:  int,
     defs:   List,
-    text:   bool
+    text:   bool,
+    log:    bool
 ):
 
     if symbol not in TERM_DAYS:
 
-        TERM_DAYS[symbol] = get_term_days(symbol)
+        TERM_DAYS[symbol] = get_term_days(symbol, log = log)
 
     term_days           = TERM_DAYS[symbol]
     today               = term_days[-1]
@@ -153,7 +154,8 @@ if __name__ == "__main__":
 
     start   = time()
 
-    text = False
+    text    = False
+    log     = "log" in argv
 
     if "text" in argv:
 
@@ -173,7 +175,7 @@ if __name__ == "__main__":
                 mode        = mode_parts[0]
                 width       = int(mode_parts[1])
 
-                render(symbol, mode, width, defs, text)
+                render(symbol, mode, width, defs, text, log)
 
     else:
 
@@ -181,8 +183,8 @@ if __name__ == "__main__":
         mode_parts  = argv[2].split(":")
         mode        = mode_parts[0]
         width       = int(mode_parts[1])
-        defs        = argv[3:]
+        defs        = [ dfn for dfn in argv[3:] if dfn != "log" ]
 
-        render(symbol, mode, width, defs, text)
+        render(symbol, mode, width, defs, text, log)
 
     print(f"elapsed: {time() - start:0.1f}")

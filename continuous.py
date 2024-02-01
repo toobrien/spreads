@@ -5,8 +5,8 @@ from    typing                  import  List
 from    util                    import  get_continuous, r
 
 
-# python continuous.py RB:0:1 HO:0:-1
-# python continuous.py HO:0:1 HO:3:-2 HO:6:1:1
+# python continuous.py RB:0:1 HO:0:-1 log
+# python continuous.py HO:0:1 HO:3:-2 HO:6:1:1 nearest
 
 
 def continuous_spread(
@@ -14,11 +14,13 @@ def continuous_spread(
     terms:      List[int],
     quantities: List[int],
     start:      str,
-    end:        str
+    end:        str,
+    mode:       str     = "spread_adjusted",
+    log:        bool    = False
 ):
 
     series = [
-        get_continuous(symbols[i], start, end, terms[i], "spread_adjusted")
+        get_continuous(symbols[i], start, end, terms[i], mode, log)
         for i in range(len(symbols))
     ]
 
@@ -66,6 +68,9 @@ def continuous_spread(
 
 if __name__ == "__main__":
 
+
+    log     = "log" in argv
+    mode    = "nearest" if "nearest" in argv else "spread_adjusted"
     pattern = compile("\d{4}-\d{2}-\d{2}")
     dates   = [ date for date in argv if pattern.match(date) ]
     start   = dates[0] if dates else "1900-01-01"

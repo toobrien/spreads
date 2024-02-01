@@ -25,7 +25,6 @@ HISTORY     = 20
 BEGIN       = CONFIG["start_date"]
 END         = CONFIG["end_date"]
 TERM_DAYS   = {}
-LOG         = False
 MONTHS      = {
     "F": 1,
     "G": 2,
@@ -123,7 +122,12 @@ class spread_wrapper:
 # ----- db -----
 
 
-def get_term_days(symbol: str, start: str = None, end: str = None):
+def get_term_days(
+    symbol: str,
+    start:  str     = BEGIN,
+    end:    str     = END,
+    log:    bool    = False
+):
     
     if not start:
 
@@ -150,7 +154,7 @@ def get_term_days(symbol: str, start: str = None, end: str = None):
                 ]
             )
     
-    if LOG:
+    if log:
 
         terms = terms.with_columns(terms["settle"].apply(log))
 
@@ -689,8 +693,9 @@ class r(IntEnum):
 
 def get_groups(
     symbol: str,
-    start: str,
-    end: str
+    start:  str     = BEGIN,
+    end:    str     = END,
+    log:    bool    = False
 ):
     
     series_id = (symbol, start, end)
@@ -698,14 +703,6 @@ def get_groups(
     if series_id in CACHE:
 
         return CACHE[series_id]
-
-    if not start:
-
-        start = BEGIN
-
-    if not end:
-
-        end = END
 
     terms = cat_df(
                 "futs",
@@ -725,7 +722,7 @@ def get_groups(
                 ]
             )
 
-    if LOG:
+    if log:
 
         terms = terms.with_columns(terms["settle"].apply(log))
 
@@ -754,13 +751,14 @@ def get_groups(
 
 def get_continuous(
     symbol: str,
-    start:  str,
-    end:    str,
-    term:   int,
-    mode:   str
+    start:  str     = BEGIN,
+    end:    str     = END,
+    term:   int     = 0,
+    mode:   str     = "spread_adjusted",
+    log:    bool    = False
 ):
 
-    groups  = get_groups(symbol, start, end)
+    groups  = get_groups(symbol, start, end, log)
     series  = []
 
     if mode == "nearest":
