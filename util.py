@@ -126,16 +126,8 @@ def get_term_days(
     symbol: str,
     start:  str     = BEGIN,
     end:    str     = END,
-    log:    bool    = False
+    logs:   bool    = False
 ):
-    
-    if not start:
-
-        start = BEGIN
-
-    if not end:
-
-        end = END
 
     terms = cat_df(
                 "futs",
@@ -154,7 +146,7 @@ def get_term_days(
                 ]
             )
     
-    if log:
+    if logs:
 
         terms = terms.with_columns(terms["settle"].apply(log))
 
@@ -695,7 +687,7 @@ def get_groups(
     symbol: str,
     start:  str     = BEGIN,
     end:    str     = END,
-    log:    bool    = False
+    logs:   bool    = False
 ):
     
     series_id = (symbol, start, end)
@@ -722,7 +714,7 @@ def get_groups(
                 ]
             )
 
-    if log:
+    if logs:
 
         terms = terms.with_columns(terms["settle"].apply(log))
 
@@ -755,10 +747,10 @@ def get_continuous(
     end:    str     = END,
     term:   int     = 0,
     mode:   str     = "spread_adjusted",
-    log:    bool    = False
+    logs:   bool    = False
 ):
 
-    groups  = get_groups(symbol, start, end, log)
+    groups  = get_groups(symbol, start, end, logs)
     series  = []
 
     if mode == "nearest":

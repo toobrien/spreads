@@ -22,7 +22,7 @@ def render(
 
     if symbol not in TERM_DAYS:
 
-        TERM_DAYS[symbol] = get_term_days(symbol, log = log)
+        TERM_DAYS[symbol] = get_term_days(symbol, logs = log)
 
     term_days           = TERM_DAYS[symbol]
     today               = term_days[-1]

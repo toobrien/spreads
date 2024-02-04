@@ -16,11 +16,11 @@ def continuous_spread(
     start:      str,
     end:        str,
     mode:       str     = "spread_adjusted",
-    log:        bool    = False
+    logs:       bool    = False
 ):
 
     series = [
-        get_continuous(symbols[i], start, end, terms[i], mode, log)
+        get_continuous(symbols[i], start, end, terms[i], mode, logs)
         for i in range(len(symbols))
     ]
 
@@ -79,7 +79,7 @@ if __name__ == "__main__":
     symbols = [ dfn[0] for dfn in dfns ]
     terms   = [ int(dfn[1]) for dfn in dfns ]
     qtys    = [ int(dfn[2]) for dfn in dfns ]
-    spread  = continuous_spread(symbols, terms, qtys, start, end)
+    spread  = continuous_spread(symbols, terms, qtys, start, end, mode, log)
 
     fig = go.Figure()
 
