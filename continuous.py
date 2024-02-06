@@ -1,4 +1,5 @@
 import  plotly.graph_objects    as      go
+from    plotly.subplots         import  make_subplots
 from    re                      import  compile
 from    sys                     import  argv
 from    typing                  import  List
@@ -59,7 +60,7 @@ def continuous_spread(
             rec[i] = rec[i] * quantities[i - 1]
     
     spread = [
-        [ rec[0], sum(rec[1:]) ]
+        [ rec[0], *rec[1:], sum(rec[1:]) ]
         for rec in spread
     ]
 
@@ -81,15 +82,35 @@ if __name__ == "__main__":
     qtys    = [ int(dfn[2]) for dfn in dfns ]
     spread  = continuous_spread(symbols, terms, qtys, start, end, mode, log)
 
-    fig = go.Figure()
+    fig = make_subplots(2, 1)
+
+    x = [ rec[0] for rec in spread ]
 
     fig.add_trace(
         go.Scatter(
             {
-                "x": [ rec[0] for rec in spread ],
-                "y": [ rec[1] for rec in spread ]
+                "x": x,
+                "y": [ rec[-1] for rec in spread ]
             }
-        )
+        ),
+        row = 1,
+        col = 1
     )
+
+    for i in range(len(symbols)):
+
+        symbol = symbols[i]
+
+        fig.add_trace(
+            go.Scatter(
+                {
+                    "x":    x,
+                    "y":    [ rec[i + 1] * qtys[i] for rec in spread ],
+                    "name": f"{symbol}[{terms[i]}]"
+                }
+            ),
+            row = 2,
+            col = 1
+        )
 
     fig.show()
