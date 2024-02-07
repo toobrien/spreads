@@ -777,7 +777,7 @@ def get_continuous(
 
                     # contract expired yesterday, compute roll factor
 
-                    cum_adj *= prev_next[r.settle] / prev[r.settle]
+                    cum_adj *= prev[r.settle] / prev_next[r.settle]
 
                 rec             = [ field for field in cur ]
                 rec[r.settle]   *= cum_adj
