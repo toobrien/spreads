@@ -148,7 +148,7 @@ def get_term_days(
     
     if logs:
 
-        terms = terms.with_columns(terms["settle"].apply(log))
+        terms = terms.with_columns(pl.col("settle").log())
 
     terms = terms.rows()
 
@@ -716,7 +716,7 @@ def get_groups(
 
     if logs:
 
-        terms = terms.with_columns(terms["settle"].apply(log))
+        terms = terms.with_columns(pl.col("settle").log())
 
     terms       = terms.rows()
     term_days   = []
