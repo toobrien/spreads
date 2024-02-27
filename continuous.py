@@ -89,8 +89,9 @@ if __name__ == "__main__":
     fig.add_trace(
         go.Scatter(
             {
-                "x": x,
-                "y": [ rec[-1] for rec in spread ]
+                "x":    x,
+                "y":    [ rec[-1] for rec in spread ],
+                "name": "spread"
             }
         ),
         row = 1,
