@@ -2,6 +2,7 @@ from    math                    import  log
 from    numpy                   import  cumsum, mean, std
 import  plotly.graph_objects    as      go
 from    sys                     import  argv
+from    scipy.stats             import  kurtosis, skew
 from    time                    import  time
 from    util                    import  get_continuous
 
@@ -42,17 +43,25 @@ if __name__ == "__main__":
 
     avg     = mean(logs)
     stdev   = std(logs)
+    kur     = kurtosis(logs)
+    ske     = skew(logs)
     avg_a   = mean(pcts)
     stdev_a = std(pcts)
 
-    print(f"avg (ari):      {avg_a:0.2f}")
-    print(f"std (ari):      {stdev_a}")
-    print(f"avg (ari_y):    {avg_a * 256:0.2f}")
-    print(f"std (ari_y):    {stdev_a * 16:0.2f}")
+    print(f"start:          {text[0]}")
+    print(f"end:            {text[-1]}")
+    print(f"avg (ari):      {avg_a:0.4f}")
+    print(f"std (ari):      {stdev_a:0.4f}")
+    print(f"avg (ari_y):    {avg_a * 256:0.4f}")
+    print(f"std (ari_y):    {stdev_a * 16:0.4f}")
     print(f"avg (log):      {avg:0.4f}")
     print(f"std (log):      {stdev:0.4f}")
     print(f"avg (log_y):    {avg * 256:0.4f}")
     print(f"std (log_y):    {stdev * 16:0.4f}")
+    print(f"kurtosis:       {kur:0.4f}")
+    print(f"kurtosis (y):   {kur * 1 / 256}")
+    print(f"skew:           {ske:0.4f}")
+    print(f"skew (y):       {ske * 1 / 16:0.4f}")
     print(f"days:           {len(logs)}")
     print(f"years:          {len(logs) / 256:0.2f}\n")
     print(f"{time() - t0:0.1f}s")
