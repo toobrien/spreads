@@ -59,7 +59,7 @@ if __name__ == "__main__":
     print(f"avg (log_y):    {avg * 256:0.4f}")
     print(f"std (log_y):    {stdev * 16:0.4f}")
     print(f"kurtosis:       {kur:0.4f}")
-    print(f"kurtosis (y):   {kur / 256}")
+    print(f"kurtosis (y):   {kur / 256:0.4f}")
     print(f"skew:           {ske:0.4f}")
     print(f"skew (y):       {ske / 16:0.4f}")
     print(f"days:           {len(logs)}")
