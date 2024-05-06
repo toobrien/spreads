@@ -9,15 +9,19 @@ from    util                    import  get_continuous
 
 if __name__ == "__main__":
 
-    t0      = time()
-    symbol  = argv[1]
-    recs    = get_continuous(symbol, "1900-01-01", "2100-01-01", 0)
-    y       = [ r[4] for r in recs ]
-    text    = [ r[1] for r in recs ]
-    logs    = [ log(y[i] / y[i - 1]) for i in range(1, len(y)) ]
-    pcts    = [ y[i] / y[i - 1] - 1 for i in range(1, len(y)) ]
-    y_      = cumsum(logs)
-    
+    t0          = time()
+    symbol      = argv[1]
+    recs        = get_continuous(symbol, "1900-01-01", "2100-01-01", 0)
+    y           = [ r[4] for r in recs ]
+    text        = [ r[1] for r in recs ]
+    logs        = [ log(y[i] / y[i - 1]) for i in range(1, len(y)) ]
+    pcts        = [ y[i] / y[i - 1] - 1 for i in range(1, len(y)) ]
+    y_          = cumsum(logs)
+    y_final     = str(y[-1]).split(".")
+    precision   = len(y_final[1]) if len(y_final) > 1 else None
+    y_start     = f"{y[0]:0.{precision}f}" if precision else y[0]
+    y_end       = f"{y[-1]:0.{precision}f}" if precision else y[-1]
+
     '''
     fig = go.Figure()
 
@@ -49,8 +53,8 @@ if __name__ == "__main__":
     stdev_a = std(pcts)
 
     print(f"symbol:         {symbol}")
-    print(f"start:          {text[0]}")
-    print(f"end:            {text[-1]}")
+    print(f"start:          {text[0]}\t{y_start}")
+    print(f"end:            {text[-1]}\t{y_end}")
     print(f"days:           {len(logs)}")
     print(f"years:          {len(logs) / 256:.2f}\n")
 
