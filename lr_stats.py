@@ -51,20 +51,23 @@ if __name__ == "__main__":
     print(f"symbol:         {symbol}")
     print(f"start:          {text[0]}")
     print(f"end:            {text[-1]}")
-    print(f"avg (ari):      {avg_a:0.4f}")
-    print(f"std (ari):      {stdev_a:0.4f}")
-    print(f"avg (ari_yr):   {avg_a * 256:0.4f}")
-    print(f"std (ari_yr):   {stdev_a * 16:0.4f}")
-    print(f"avg (geo):      {avg:0.4f}")
-    print(f"std (geo):      {stdev:0.4f}")
-    print(f"avg (geo_yr):   {avg * 256:0.4f}")
-    print(f"std (geo_yr):   {stdev * 16:0.4f}")
-    print(f"kurtosis:       {kur:0.4f}")
-    print(f"kurtosis (yr):  {kur / 256:0.4f}")
-    print(f"skew:           {ske:0.4f}")
-    print(f"skew (yr):      {ske / 16:0.4f}")
     print(f"days:           {len(logs)}")
-    print(f"years:          {len(logs) / 256:0.2f}\n")
+    print(f"years:          {len(logs) / 256:.2f}\n")
+
+    print(f'{"":15}{"daily":15}{"annual":15}\n')
+
+    print("arithmetic\n")
+
+    print(f'{"avg:":15}{avg_a:15.4f}{avg_a * 256:15.4f}')
+    print(f'{"std:":15}{stdev_a:15.4f}{stdev_a * 16:15.4f}\n')
+    
+    print("geometric\n")
+
+    print(f'{"avg:":15}{avg:15.4f}{avg * 256:15.4f}')
+    print(f'{"std:":15}{stdev:15.4f}{stdev * 16:15.4f}')
+    print(f'{"kurtosis:":15}{kur:15.4f}{kur / 256:15.4f}')
+    print(f'{"skew:":15}{ske:15.4f}{ske / 16:15.4f}\n')
+
     print(f"{time() - t0:0.1f}s")
 
     pass
