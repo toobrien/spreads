@@ -54,7 +54,7 @@ if __name__ == "__main__":
     print(f"days:           {len(logs)}")
     print(f"years:          {len(logs) / 256:.2f}\n")
 
-    print(f'{"":15}{"daily":15}{"annual":15}\n')
+    print(f'{"":15}{"daily":>15}{"annual":>15}\n')
 
     print("arithmetic\n")
 
