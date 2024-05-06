@@ -48,6 +48,7 @@ if __name__ == "__main__":
     avg_a   = mean(pcts)
     stdev_a = std(pcts)
 
+    print(f"symbol:         {symbol}")
     print(f"start:          {text[0]}")
     print(f"end:            {text[-1]}")
     print(f"avg (ari):      {avg_a:0.4f}")
