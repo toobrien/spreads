@@ -1,3 +1,4 @@
+from    datetime                import  datetime
 from    json                    import  loads
 import  plotly.graph_objects    as      go
 from    plotly.subplots         import  make_subplots
@@ -10,6 +11,7 @@ from    util                    import  all, add_scatters, add_pdfs, by_season, 
 
 
 PLOT_HEIGHT = 400
+    
 
 def render(
     symbol: str,
@@ -17,12 +19,15 @@ def render(
     width:  int,
     defs:   List,
     text:   bool,
+    years:  int,
     log:    bool
 ):
 
     if symbol not in TERM_DAYS:
 
-        TERM_DAYS[symbol] = get_term_days(symbol, logs = log)
+        start = f"{(datetime.now().year - years)}-01-01"
+
+        TERM_DAYS[symbol] = get_term_days(symbol, start = start, logs = log)
 
     term_days           = TERM_DAYS[symbol]
     today               = term_days[-1]
@@ -154,6 +159,7 @@ if __name__ == "__main__":
 
     start   = time()
 
+    years   = int(argv[1])
     text    = False
     log     = "log" in argv
 
@@ -162,9 +168,9 @@ if __name__ == "__main__":
         argv.remove("text")
         text = True
 
-    if argv[1] == "watchlist":
+    if argv[2] == "watchlist":
 
-        watchlist_name  = argv[2]
+        watchlist_name  = argv[3]
         watchlist       = loads(open("./watchlists.json", "r").read())
 
         for symbol, defs in watchlist[watchlist_name].items():
@@ -175,16 +181,16 @@ if __name__ == "__main__":
                 mode        = mode_parts[0]
                 width       = int(mode_parts[1])
 
-                render(symbol, mode, width, defs, text, log)
+                render(symbol, mode, width, defs, text, years, log)
 
     else:
 
-        symbol      = argv[1]
-        mode_parts  = argv[2].split(":")
+        symbol      = argv[2]
+        mode_parts  = argv[3].split(":")
         mode        = mode_parts[0]
         width       = int(mode_parts[1])
-        defs        = [ dfn for dfn in argv[3:] if dfn != "log" ]
+        defs        = [ dfn for dfn in argv[4:] if dfn != "log" ]
 
-        render(symbol, mode, width, defs, text, log)
+        render(symbol, mode, width, defs, text, years, log)
 
     print(f"elapsed: {time() - start:0.1f}")
