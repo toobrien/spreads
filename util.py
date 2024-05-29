@@ -10,7 +10,7 @@ from    typing                  import  List, Tuple
 
 path.append("..")
 
-from    data.cat_df            import  cat_df
+from    data.cat_df            import  cat_df, get_futc
 
 
 CONFIG      = loads(open("./config.json").read())
@@ -129,6 +129,47 @@ def get_term_days(
     logs:   bool    = False
 ):
 
+    terms = get_futc(
+        symbol, 
+        start   = start, 
+        end     = end
+    ).sort(
+        [ "date", "year", "month" ]
+    ).select(
+        [
+            "date",
+            "month",
+            "year",
+            "settle",
+            "dte"
+        ]
+    )
+    
+    if logs:
+
+        terms = terms.with_columns(pl.col("settle").log())
+
+    terms       = terms.rows()
+    term_days   = []
+    cur_date    = terms[0][term.date]
+    cur_day     = []
+
+    for row in terms:
+
+        if row[term.date] != cur_date:
+
+            term_days.append(cur_day)
+
+            cur_date    = row[term.date]
+            cur_day     = []
+        
+        cur_day.append(row)
+
+    term_days.append(cur_day)
+
+    return term_days
+
+    '''
     terms = cat_df(
                 "futs",
                 symbol,
@@ -170,7 +211,7 @@ def get_term_days(
     term_days.append(cur_day)
 
     return term_days
-
+    '''
 
 # ----- spreads -----
 
