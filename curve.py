@@ -11,6 +11,8 @@ def render(sym: str):
 
     pass
 
+    return None
+
 
 if __name__ == "__main__":
 
@@ -26,8 +28,9 @@ if __name__ == "__main__":
         trace = render(sym)
 
         fig.add_trace(
-            row = i,
-            col = 1 
+            trace   = trace,
+            row     = i,
+            col     = 1 
         )
 
     print(f"{time() - t0:0.1f}s")
