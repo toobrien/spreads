@@ -1,8 +1,8 @@
-import  plotly.graph_objects    as go
-from    plotly.subplots         import make_subplots
-from    sys                     import argv
-from    time                    import time
-from    util                    import get_term_days, term
+import  plotly.graph_objects    as      go
+from    plotly.subplots         import  make_subplots
+from    sys                     import  argv
+from    time                    import  time
+from    util                    import  get_term_days, term
 
 
 HEIGHT          = 500
@@ -80,8 +80,6 @@ def render(sym: str, fig, row_idx = int):
         col         = 1
     )
 
-    return None
-
 
 if __name__ == "__main__":
 
@@ -104,5 +102,3 @@ if __name__ == "__main__":
     fig.show()
 
     print(f"{time() - t0:0.1f}s")
-
-    pass
