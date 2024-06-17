@@ -694,23 +694,22 @@ def get_groups(
 
         return CACHE[series_id]
 
-    terms = cat_df(
-                "futs",
-                symbol,
-                start,
-                end
-            ).sort(
-                [ "date", "year", "month" ]
-            ).select(
-                [
-                    "contract_id",
-                    "date",
-                    "month",
-                    "year",
-                    "settle",
-                    "dte"
-                ]
-            )
+    terms = get_futc(
+        symbol, 
+        start   = start, 
+        end     = end
+    ).sort(
+        [ "date", "year", "month" ]
+    ).select(
+        [
+            "contract_id",
+            "date",
+            "month",
+            "year",
+            "settle",
+            "dte"
+        ]
+    )
 
     if logs:
 

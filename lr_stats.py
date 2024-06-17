@@ -11,7 +11,9 @@ if __name__ == "__main__":
 
     t0          = time()
     symbol      = argv[1]
-    recs        = get_continuous(symbol, "1900-01-01", "2100-01-01", 0)
+    start       = "1900-01-01" if len(argv) < 3 else argv[2]
+    end         = "2100-01-01" if len(argv) < 4 else argv[3]
+    recs        = get_continuous(symbol, start, end, 0)
     y           = [ r[4] for r in recs ]
     text        = [ r[1] for r in recs ]
     logs        = [ log(y[i] / y[i - 1]) for i in range(1, len(y)) ]
@@ -45,12 +47,13 @@ if __name__ == "__main__":
     fig.show()
     '''
 
-    avg     = mean(logs)
-    stdev   = std(logs)
-    kur     = kurtosis(logs)
-    ske     = skew(logs)
-    avg_a   = mean(pcts)
-    stdev_a = std(pcts)
+    avg         = mean(logs)
+    stdev       = std(logs)
+    kur         = kurtosis(logs)
+    ske         = skew(logs)
+    avg_a       = mean(pcts)
+    stdev_a     = std(pcts)
+    sharpe_a    = (avg_a / stdev_a) * 16
 
     print(f"symbol:         {symbol}")
     print(f"start:          {text[0]}\t{y_start}")
@@ -63,8 +66,9 @@ if __name__ == "__main__":
     print("arithmetic\n")
 
     print(f'{"avg:":15}{avg_a:15.4f}{avg_a * 256:15.4f}')
-    print(f'{"std:":15}{stdev_a:15.4f}{stdev_a * 16:15.4f}\n')
-    
+    print(f'{"std:":15}{stdev_a:15.4f}{stdev_a * 16:15.4f}')
+    print(f'{"sharpe:":15}{sharpe_a:15.2f}\n')
+
     print("geometric\n")
 
     print(f'{"avg:":15}{avg:15.4f}{avg * 256:15.4f}')
