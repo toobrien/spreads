@@ -94,7 +94,7 @@ if __name__ == "__main__":
                         rows                = n_syms, 
                         cols                = 1,
                         subplot_titles      = tuple( sym for sym in syms ),
-                        vertical_spacing    = 0.02
+                        vertical_spacing    = 0.01
                     )
 
     for i in range(n_syms):
