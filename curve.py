@@ -10,6 +10,9 @@ MAX_CONTRACTS   = 12
 MAX_HISTORY     = 90
 
 
+# python curve.py 12 CL HO RB NG HE LE VX ZR ZC ZW ZS ZL ZM
+
+
 def render(sym: str, fig, row_idx = int):
 
     days        = get_term_days(sym)[-MAX_HISTORY:]
@@ -83,15 +86,16 @@ def render(sym: str, fig, row_idx = int):
 
 if __name__ == "__main__":
 
-    t0      = time()
-    syms    = argv[1:]
-    n_syms  = len(syms)
-    fig     = make_subplots(
-                rows                = n_syms, 
-                cols                = 1,
-                subplot_titles      = tuple( sym for sym in syms ),
-                vertical_spacing    = 0.02
-            )
+    t0              = time()
+    MAX_CONTRACTS   = int(argv[1])
+    syms            = argv[2:]
+    n_syms          = len(syms)
+    fig             = make_subplots(
+                        rows                = n_syms, 
+                        cols                = 1,
+                        subplot_titles      = tuple( sym for sym in syms ),
+                        vertical_spacing    = 0.02
+                    )
 
     for i in range(n_syms):
 
