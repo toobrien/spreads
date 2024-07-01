@@ -743,7 +743,7 @@ def get_continuous(
     start:  str     = BEGIN,
     end:    str     = END,
     term:   int     = 0,
-    mode:   str     = "spread_adjusted",
+    mode:   str     = "prod_adjusted",
     logs:   bool    = False
 ):
 
@@ -756,7 +756,7 @@ def get_continuous(
 
         series = [ group[term] for group in groups ]
 
-    elif mode == "spread_adjusted":
+    elif mode == "prod_adjusted":
 
         # schwager pg. 282; use ratio instead of difference
 
@@ -792,5 +792,43 @@ def get_continuous(
         for rec in series:
 
             rec[r.settle] /= cum_adj
+        
+    elif mode == "sum_adjusted":
+
+        # schwager pg. 282
+    
+        cum_adj = 0
+
+        for i in range(1, len(groups)):
+
+            try:
+
+                cur         = groups[i][term]
+                prev        = groups[i - 1][term]
+                prev_next   = groups[i - 1][term + 1]
+
+                if cur[r.id] != prev[r.id]:
+
+                    # contract expired yesterday, compute roll factor
+
+                    cum_adj += prev[r.settle] - prev_next[r.settle]
+
+                rec             = [ field for field in cur ]
+                rec[r.settle]   += cum_adj
+
+                series.append(rec)
+                
+            except Exception as e:
+
+                # negative price or missing a term
+
+                #print(e)
+
+                pass
+        
+        for rec in series:
+
+            rec[r.settle] /= cum_adj
+        
 
     return series

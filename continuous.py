@@ -18,7 +18,7 @@ def continuous_spread(
     quantities: List[int],
     start:      str,
     end:        str,
-    mode:       str     = "spread_adjusted",
+    mode:       str     = "prod_adjusted",
     logs:       bool    = False
 ):
 
@@ -73,7 +73,7 @@ if __name__ == "__main__":
 
 
     log     = "log" in argv
-    mode    = "nearest" if "nearest" in argv else "spread_adjusted"
+    mode    = "nearest" if "nearest" in argv else "sum_adjusted" if "sum_adjusted" in argv else "prod_adjusted"
     pattern = compile("\d{4}-\d{2}-\d{2}")
     dates   = [ date for date in argv if pattern.match(date) ]
     start   = dates[0] if dates else "1900-01-01"
