@@ -1,6 +1,8 @@
+from    numpy                   import  absolute, mean, std
 import  plotly.graph_objects    as      go
 from    plotly.subplots         import  make_subplots
 from    re                      import  compile
+from    scipy.stats             import  kurtosis, skew
 from    sys                     import  argv
 from    typing                  import  List
 from    util                    import  get_continuous, r
@@ -113,5 +115,25 @@ if __name__ == "__main__":
             row = 2,
             col = 1
         )
+
+    x       = x[1:]
+    gross   = [ sum(absolute(rec[1:-1]))for rec in spread ]
+    returns = [
+                (spread[i][-1] - spread[i - 1][-1]) / gross[i - 1]
+                for i in range(1, len(spread))
+            ]
+    
+    mu      = mean(returns)
+    sigma   = std(returns)
+    kur     = kurtosis(returns)
+    ske     = skew(returns)
+    sharpe  = mu / sigma * 16
+
+    print("\narithmetic, annual\n")
+    print(f"{'mu:':10}{mu * 256:<10.4f}")
+    print(f"{'sigma:':10}{sigma * 16:<10.4f}")
+    print(f"{'kurtosis:':10}{kur / 256:<10.4f}")
+    print(f"{'skew:':10}{ske / 16:<10.4f}")
+    print(f"{'sharpe:':10}{sharpe:<10.4f}\n")
 
     fig.show()

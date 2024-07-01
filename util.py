@@ -785,7 +785,9 @@ def get_continuous(
 
                 # negative price or missing a term
 
-                print(e)
+                #print(e)
+
+                pass
         
         for rec in series:
 
