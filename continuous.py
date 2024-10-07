@@ -81,7 +81,7 @@ if __name__ == "__main__":
     dfns    = [ arg.split(":") for arg in argv if ":" in arg ]
     symbols = [ dfn[0] for dfn in dfns ]
     terms   = [ int(dfn[1]) for dfn in dfns ]
-    qtys    = [ int(dfn[2]) for dfn in dfns ]
+    qtys    = [ float(dfn[2]) for dfn in dfns ]
     spread  = continuous_spread(symbols, terms, qtys, start, end, mode, log)
 
     fig = make_subplots(2, 1)
