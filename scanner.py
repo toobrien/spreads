@@ -131,7 +131,7 @@ def z_chg(spread_id, spread_group, lag):
     
     for i in range(1, len(spread_rows)):
     
-        d_settle[i] = spread_rows[i][spread.settle] - spread_rows[i -1][spread.settle]
+        d_settle[i] = spread_rows[i][spread.settle] - spread_rows[i - 1][spread.settle]
 
     for i in range(lag, len(d_settle)):
     
@@ -170,7 +170,7 @@ CRITERIA_FUNCS = {
 }
 
 
-def perform_scan(title, definition, criteria):
+def run(title, definition, criteria):
 
     spread_groups = get_active_spread_groups(**definition)
 
@@ -202,12 +202,11 @@ def perform_scan(title, definition, criteria):
 
                 if ":" in crit:
 
-                    parts = crit.split(":")
-
+                    parts   = crit.split(":")
                     func    = parts[0]
                     params  = parts[1]
 
-                res     = CRITERIA_FUNCS[func](spread_id, spread_group, params)
+                res = CRITERIA_FUNCS[func](spread_id, spread_group, params)
 
                 if res:
 
@@ -225,7 +224,6 @@ def perform_scan(title, definition, criteria):
 
             print(output)
 
-    
 
 if __name__ == "__main__":
 
@@ -254,7 +252,7 @@ if __name__ == "__main__":
                 "max_months":   max_months
             }
 
-            perform_scan(f"{parts[0]} {mode}:{width}", definition, criteria)
+            run(f"{parts[0]} {mode}:{width}", definition, criteria)
 
             print("\n")
     
@@ -274,6 +272,6 @@ if __name__ == "__main__":
                         "max_months":   params["max_months"]
                     }
 
-                    perform_scan(f"{symbol} {mode}:{width}", definition, criteria)
+                    run(f"{symbol} {mode}:{width}", definition, criteria)
 
                     print("\n")
