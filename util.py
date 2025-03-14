@@ -428,12 +428,15 @@ def get_active_spread_groups(
     mode:           str,
     width:          int,
     aggregate_by:   str,
-    max_months:     int
+    max_months:     int,
+    years:          int = None
 ):
 
     if symbol not in TERM_DAYS:
 
-        TERM_DAYS[symbol] = get_term_days(symbol)
+        start = f"{(datetime.now().year - years)}-01-01" if years else BEGIN
+
+        TERM_DAYS[symbol] = get_term_days(symbol, start)
 
     term_days   = TERM_DAYS[symbol]
     today       = term_days[-1][:max_months]

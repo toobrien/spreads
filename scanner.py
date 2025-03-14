@@ -170,19 +170,25 @@ CRITERIA_FUNCS = {
 }
 
 
-def run(title, definition, criteria):
+def passes(latest, func):
 
-    spread_groups = get_active_spread_groups(**definition)
+    # temporary solution
 
-    print(title.ljust(COL_WIDTH))
-    print(
-            "".ljust(COL_WIDTH) + 
-            "".join(
-                [ crit.ljust(COL_WIDTH) for crit in criteria ]
-            ) + "\n"
-        )
+    if func == "z_settle":
 
-    spread_groups = sorted(spread_groups, key = lambda g: g.group_id[0])
+        return abs(latest) > 2
+    
+    else:
+        
+        return True
+
+
+def run(definition, criteria):
+
+    spread_groups   = sorted(get_active_spread_groups(**definition), key = lambda g: g.group_id[0])
+    symbol          = definition["symbol"]
+    mode            = definition["mode"]
+    width           = definition["width"]
 
     for spread_group in spread_groups:
 
@@ -190,8 +196,12 @@ def run(title, definition, criteria):
 
         for spread_id in active_ids:
 
-            printable_id = [ leg[0] for leg in spread_id ] # months
-            printable_id.append(f" {spread_id[0][1][2:]}") # year
+            display         = True
+            printable_id    = [ f"{symbol} " ]
+
+            printable_id.extend([ leg[0] for leg in spread_id ])    # months
+            printable_id.append(f" {spread_id[0][1][2:]}")          # year
+            printable_id.append(f" {mode}:{width} ")
 
             output = "".join(printable_id).ljust(COL_WIDTH)
 
@@ -210,7 +220,13 @@ def run(title, definition, criteria):
 
                 if res:
 
-                    latest  = res[-1]
+                    latest = res[-1]
+
+                    if not passes(latest, func):
+
+                        display = False
+
+                        break
 
                     if isinstance(latest, float):
 
@@ -222,17 +238,31 @@ def run(title, definition, criteria):
 
                     output += "None".ljust(COL_WIDTH)
 
-            print(output)
+            if display:
+                
+                print(output)
+            
+            else:
+
+                display = True
 
 
 if __name__ == "__main__":
 
-    criteria = SCANS["criteria"]
-    symbols  = SCANS["symbols"]
+    criteria    = SCANS["criteria"]
+    symbols     = SCANS["symbols"]
+    years       = int(argv[1])
 
-    if len(argv) > 1:
+    print(
+            "".ljust(COL_WIDTH) + 
+            "".join(
+                [ crit.ljust(COL_WIDTH) for crit in criteria ]
+            ) + "\n"
+        )
 
-        definitions = argv[1:]
+    if len(argv) > 2:
+
+        definitions = argv[2:]
 
         for definition in definitions:
 
@@ -249,12 +279,11 @@ if __name__ == "__main__":
                 "mode":         mode,
                 "width":        width,
                 "aggregate_by": aggregate_by,
-                "max_months":   max_months
+                "max_months":   max_months,
+                "years":        years
             }
 
-            run(f"{parts[0]} {mode}:{width}", definition, criteria)
-
-            print("\n")
+            run(definition, criteria)
     
     else:    
 
@@ -269,9 +298,8 @@ if __name__ == "__main__":
                         "mode":         mode,
                         "width":        width,
                         "aggregate_by": params["aggregate_by"],
-                        "max_months":   params["max_months"]
+                        "max_months":   params["max_months"],
+                        "years":        years
                     }
 
-                    run(f"{symbol} {mode}:{width}", definition, criteria)
-
-                    print("\n")
+                    run(definition, criteria)
