@@ -205,6 +205,4 @@ if __name__ == "__main__":
         print(f"{'beta':10}{beta:<10.04f}")
         print(f"{'r^2':10}{beta**2:<10.04f}\n")
 
-        pass
-
         fig.show()
