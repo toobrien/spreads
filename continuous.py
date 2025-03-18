@@ -11,7 +11,7 @@ from    util                    import  get_continuous, r
 
 # python continuous.py RB:0:1 HO:0:-1 log
 # python continuous.py HO:0:1 HO:3:-2 HO:6:1:1 nearest
-# python continuous.py ZM:0:1 ZM:1:-1 reg
+# python continuous.py ZM:0:1 ZM:1:-1 reg 50
 
 
 def continuous_spread(
@@ -111,7 +111,7 @@ if __name__ == "__main__":
             go.Scatter(
                 {
                     "x":    x,
-                    "y":    [ rec[i + 1] * qtys[i] for rec in spread ],
+                    "y":    [ rec[i + 1] / qtys[i] for rec in spread ],
                     "name": f"{symbol}[{terms[i]}]"
                 }
             ),
@@ -146,6 +146,8 @@ if __name__ == "__main__":
         # regress spread change, expressed as arithmetic return on front month, on front month return
 
         fig     = make_subplots(rows = 2, cols = 1, vertical_spacing = 0.025)
+        reg_len = int(argv[argv.index("reg") + 1])
+        spread  = spread[-reg_len:]
         m0      = [ abs(rec[1]) for rec in spread ]
         s_ret   = [ 
                     (m0[i - 1] + spread[i][-1] - spread[i - 1][-1]) / m0[i - 1] - 1 
@@ -161,9 +163,11 @@ if __name__ == "__main__":
         beta    = model.coef_[0]
         alpha   = model.intercept_
 
+        text    = x[-reg_len + 1:]
+
         traces  = [
-            ( "reg", m0_ret, s_ret, "markers" ),
-            ( "model", x_mod, y_mod, "lines" )
+            ( "reg", m0_ret, s_ret, "markers", text ),
+            ( "model", x_mod, y_mod, "lines", None )
         ]
 
         for trace in traces:
@@ -174,7 +178,8 @@ if __name__ == "__main__":
                         "name": trace[0],
                         "x":    trace[1],
                         "y":    trace[2],
-                        "mode": trace[3]
+                        "mode": trace[3],
+                        "text": trace[4]
                     }
                 ),
                 row = 1, 
@@ -194,7 +199,7 @@ if __name__ == "__main__":
                         "name":         trace[0],
                         "y":            trace[1],
                         "marker":       { 'color': trace[2] },
-                        "hovertext":    x
+                        "hovertext":    text
                     }
                 ),
                 row = 2, 
