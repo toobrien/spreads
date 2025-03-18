@@ -1,8 +1,9 @@
-from    numpy                   import  absolute, mean, std
+from    numpy                   import  absolute, arange, array, mean, std
 import  plotly.graph_objects    as      go
 from    plotly.subplots         import  make_subplots
 from    re                      import  compile
 from    scipy.stats             import  kurtosis, skew
+from    sklearn.linear_model    import  LinearRegression
 from    sys                     import  argv
 from    typing                  import  List
 from    util                    import  get_continuous, r
@@ -10,6 +11,7 @@ from    util                    import  get_continuous, r
 
 # python continuous.py RB:0:1 HO:0:-1 log
 # python continuous.py HO:0:1 HO:3:-2 HO:6:1:1 nearest
+# python continuous.py ZM:0:1 ZM:1:-1 reg
 
 
 def continuous_spread(
@@ -73,6 +75,7 @@ if __name__ == "__main__":
 
 
     log     = "log" in argv
+    reg     = "reg" in argv
     mode    = "nearest" if "nearest" in argv else "sum_adjusted" if "sum_adjusted" in argv else "prod_adjusted"
     pattern = compile("\d{4}-\d{2}-\d{2}")
     dates   = [ date for date in argv if pattern.match(date) ]
@@ -137,3 +140,71 @@ if __name__ == "__main__":
     print(f"{'sharpe:':10}{sharpe:<10.4f}\n")
 
     fig.show()
+
+    if reg:
+
+        # regress spread change, expressed as arithmetic return on front month, on front month return
+
+        fig     = make_subplots(rows = 2, cols = 1, vertical_spacing = 0.025)
+        m0      = [ abs(rec[1]) for rec in spread ]
+        s_ret   = [ 
+                    (m0[i - 1] + spread[i][-1] - spread[i - 1][-1]) / m0[i - 1] - 1 
+                    for i in range(1, len(spread)) 
+                ]
+        m0_ret  = [ m0[i] / m0[i - 1] - 1 for i in range(1, len(spread)) ]
+        model   = LinearRegression()
+
+        model.fit(array(m0_ret).reshape(-1, 1), s_ret)
+
+        x_mod   = arange(min(m0_ret), max(m0_ret), step = 0.0001)
+        y_mod   = model.predict(array(x_mod).reshape(-1, 1))
+        beta    = model.coef_[0]
+        alpha   = model.intercept_
+
+        traces  = [
+            ( "reg", m0_ret, s_ret, "markers" ),
+            ( "model", x_mod, y_mod, "lines" )
+        ]
+
+        for trace in traces:
+
+            fig.add_trace(
+                go.Scattergl(
+                    {
+                        "name": trace[0],
+                        "x":    trace[1],
+                        "y":    trace[2],
+                        "mode": trace[3]
+                    }
+                ),
+                row = 1, 
+                col = 1
+            )
+
+        traces = [
+            ( "m0_ret", m0_ret, "#FF0000" ),
+            ( "s_ret", s_ret, "#0000FF" )
+        ]
+
+        for trace in traces:
+
+            fig.add_trace(
+                go.Bar(
+                    {
+                        "name":         trace[0],
+                        "y":            trace[1],
+                        "marker":       { 'color': trace[2] },
+                        "hovertext":    x
+                    }
+                ),
+                row = 2, 
+                col = 1
+            )
+
+        print(f"{'alpha':10}{alpha:<10.04f}")
+        print(f"{'beta':10}{beta:<10.04f}")
+        print(f"{'r^2':10}{beta**2:<10.04f}\n")
+
+        pass
+
+        fig.show()
