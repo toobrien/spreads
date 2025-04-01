@@ -1,7 +1,12 @@
-from json       import loads
-from statistics import mean, stdev
-from sys        import argv
-from util       import get_active_spread_groups, spread
+from    json        import  loads
+import  polars      as      pl
+from    statistics  import  mean, stdev
+from    sys         import  argv
+from    util        import  get_active_spread_groups, spread
+
+
+pl.Config.set_tbl_cols(-1)
+pl.Config.set_tbl_rows(-1)
 
 
 SCANS       = loads(open("./scans.json", "r").read())
@@ -185,36 +190,47 @@ def passes(latest, func):
 
 def run(definition, criteria):
 
+    point_value     = definition["point_value"]
+    
+    del definition["point_value"]
+
     spread_groups   = sorted(get_active_spread_groups(**definition), key = lambda g: g.group_id[0])
     symbol          = definition["symbol"]
     mode            = definition["mode"]
     width           = definition["width"]
-
+    rows            = []
+    
     for spread_group in spread_groups:
 
         active_ids = sorted(spread_group.active_ids, key = lambda i: (i[0][1], i[0][0]))
 
         for spread_id in active_ids:
 
-            display         = True
-            printable_id    = [ f"{symbol} " ]
-
-            printable_id.extend([ leg[0] for leg in spread_id ])    # months
-            printable_id.append(f" {spread_id[0][1][2:]}")          # year
-            printable_id.append(f" {mode}:{width} ")
-
-            output = "".join(printable_id).ljust(COL_WIDTH)
+            display = True
+            row     = [ 
+                        symbol,
+                        " ".join([ 
+                            "".join([ leg[0] for leg in spread_id ]),   # months
+                            f"{spread_id[0][1][2:]}",                   # year
+                            f"{mode}:{width}"
+                        ])
+                    ]
 
             for crit in criteria:
 
-                params  = None
-                func    = crit
+                params          = None
+                func            = crit
+                output_dollars  = False
 
                 if ":" in crit:
 
                     parts   = crit.split(":")
                     func    = parts[0]
                     params  = parts[1]
+
+                    if "$" in parts:
+
+                        output_dollars = True
 
                 res = CRITERIA_FUNCS[func](spread_id, spread_group, params)
 
@@ -230,21 +246,40 @@ def run(definition, criteria):
 
                     if isinstance(latest, float):
 
-                        latest = f"{latest:0.3f}"
+                        if output_dollars:
 
-                    output += f"{latest}".ljust(COL_WIDTH)
+                            latest = int(f"{latest * point_value:0.0f}")
+
+                        else:
+
+                            latest = float(f"{latest:0.3f}")
+
+                    row.append(latest)
                 
                 else:
 
-                    output += "None".ljust(COL_WIDTH)
+                    row.append(None)
 
             if display:
                 
-                print(output)
+                rows.append(row)
             
             else:
 
                 display = True
+
+    data = {
+            "symbol":   [ row[0] for row in rows ],
+            "id":       [ row[1] for row in rows ]
+        }
+    
+    for i in range(len(criteria)):
+
+        data[criteria[i]] = [ row[i + 2] for row in rows ]
+
+    df = pl.DataFrame(data)
+
+    return df
 
 
 if __name__ == "__main__":
@@ -252,13 +287,7 @@ if __name__ == "__main__":
     criteria    = SCANS["criteria"]
     symbols     = SCANS["symbols"]
     years       = int(argv[1])
-
-    print(
-            "".ljust(COL_WIDTH) + 
-            "".join(
-                [ crit.ljust(COL_WIDTH) for crit in criteria ]
-            ) + "\n"
-        )
+    dfs         = []
 
     if len(argv) > 2:
 
@@ -273,6 +302,7 @@ if __name__ == "__main__":
             width           = int(parts[2])
             aggregate_by    = parts[3]
             max_months      = int(parts[4])
+            point_value     = float(parts[5])
 
             definition = {
                 "symbol":       symbol,
@@ -280,10 +310,15 @@ if __name__ == "__main__":
                 "width":        width,
                 "aggregate_by": aggregate_by,
                 "max_months":   max_months,
+                "point_value":  point_value,
                 "years":        years
             }
 
-            run(definition, criteria)
+            df = run(definition, criteria)
+
+            if df.height != 0:
+
+                dfs.append(df)
     
     else:    
 
@@ -299,7 +334,16 @@ if __name__ == "__main__":
                         "width":        width,
                         "aggregate_by": params["aggregate_by"],
                         "max_months":   params["max_months"],
+                        "point_value":  params["point_value"],
                         "years":        years
                     }
 
-                    run(definition, criteria)
+                    df = run(definition, criteria)
+
+                    if df.height != 0:
+
+                        dfs.append(df)
+    
+    df = pl.concat(dfs)
+
+    print(df)

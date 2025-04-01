@@ -499,6 +499,19 @@ def get_active_spread_groups(
     return spread_groups
 
 
+def get_single(
+    symbol:     str,
+    legs:       List[str],
+    weights:    List[int],
+    start:      str = BEGIN,
+    end:        str = END
+):
+
+    df = get_futc(symbol, start = start, end = end)
+
+    pass
+
+
 # ----- plotting -----
 
 
