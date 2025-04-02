@@ -1,7 +1,9 @@
 from    json        import  loads
+import  numpy       as      np
 import  polars      as      pl
 from    statistics  import  mean, stdev
 from    sys         import  argv
+from    time        import  time
 from    util        import  get_active_spread_groups, spread
 
 
@@ -165,13 +167,35 @@ def z_settle(spread_id, spread_group, params = None):
     return res
 
 
+def forecast(spread_id, spread_group, horizon):
+
+    horizon     = int(horizon)
+    all_rows    = spread_group.get_all_rows()
+    dte         = np.array([ row[spread.dte] for row in all_rows ])
+    stl         = np.array([ row[spread.settle] for row in all_rows ])
+    unq, idx    = np.unique(dte, return_inverse = True)
+    med         = np.array([ np.median(stl[idx == i]) for i in range(len(unq)) ])
+
+    spread_rows = spread_group.get_spread_rows(spread_id)
+    cur_dte     = spread_rows[-1][spread.dte]
+    cur_stl     = spread_rows[-1][spread.settle]
+    hor_dte     = max(cur_dte - horizon, 0)
+
+    i           = np.searchsorted(unq, cur_dte)
+    j           = np.searchsorted(unq, hor_dte)
+    f           = med[j] - med[i]
+
+    return [ f ]
+
+
 CRITERIA_FUNCS = {
     #"atr":         atr,
     "dte":          dte,
     "rng_score":    rng_score,
     "sigma":        sigma,
     "z_chg":        z_chg,
-    "z_settle":     z_settle
+    "z_settle":     z_settle,
+    "forecast":     forecast
 }
 
 
@@ -284,6 +308,7 @@ def run(definition, criteria):
 
 if __name__ == "__main__":
 
+    t0          = time()
     criteria    = SCANS["criteria"]
     symbols     = SCANS["symbols"]
     years       = int(argv[1])
@@ -347,3 +372,5 @@ if __name__ == "__main__":
     df = pl.concat(dfs)
 
     print(df)
+
+    print(f"{time() - t0:0.1f}s")

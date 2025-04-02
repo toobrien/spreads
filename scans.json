@@ -2,7 +2,8 @@
     "criteria": [
         "z_settle",
         "dte",
-        "sigma:20:$"
+        "sigma:20:$",
+        "forecast:80"
     ],
     "symbols": {
         "NG": {
