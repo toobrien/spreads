@@ -3,7 +3,7 @@
         "z_settle",
         "dte",
         "sigma:20:$",
-        "forecast:80:$"
+        "forecast:60:$"
     ],
     "symbols": {
         "NG": {

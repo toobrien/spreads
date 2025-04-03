@@ -67,24 +67,26 @@ def rng_score(spread_id, spread_group, lags):
     short_lag   = int(lags[0])
     long_lag    = int(lags[1])
     settles     = [ row[spread.settle] for row in spread_rows ]
-    sigmas      = [ None for row in spread_rows ]
-    res         = [ None for row in spread_rows ]
+    sigmas      = [ None for _ in spread_rows ]
+    res         = [ None for _ in spread_rows ]
 
     if len(settles) >= long_lag:
 
+        '''
         for i in range(1, len(settles)):
 
             d_settles = [ 
                             settles[i] - settles[i - 1]
                             for i in range(len(settles))
-                        ]
+                        ]'
+        '''
 
         sigmas = sigma(spread_id, spread_group, short_lag)
 
         for i in range(long_lag, len(settles)):
 
-            rng         = max(settles[i - long_lag:i]) - min(settles[i - long_lag:i])
-            res[i]      = sigmas[i] / rng if rng != 0 else 0 
+            rng     = max(settles[i - long_lag:i]) - min(settles[i - long_lag:i])
+            res[i]  = sigmas[i] / rng if rng != 0 else 0 
     
     return res
 
@@ -94,7 +96,7 @@ def range_pct(spread_id, spread_group, lag):
     spread_rows = spread_group.get_spread_rows(spread_id)
     lag         = int(lag)
     settles     = [ row[spread.settle] for row in spread_rows ]
-    res         = [ 0 for row in spread_rows ]
+    res         = [ 0 for _ in spread_rows ]
 
     if len(settles) >= lag:
 
@@ -119,7 +121,7 @@ def sigma(spread_id, spread_group, lag):
 
     for i in range(1, len(d_settle)):
 
-        d_settle[i] = spread_rows[i][spread.settle] - spread_rows[i-1][spread.settle]
+        d_settle[i] = spread_rows[i][spread.settle] - spread_rows[i - 1][spread.settle]
                     
     for i in range(lag, len(d_settle)):
 
@@ -174,7 +176,7 @@ def forecast(spread_id, spread_group, horizon):
     dte         = np.array([ row[spread.dte] for row in all_rows ])
     stl         = np.array([ row[spread.settle] for row in all_rows ])
     unq, idx    = np.unique(dte, return_inverse = True)
-    med         = np.array([ np.median(stl[idx == i]) for i in range(len(unq)) ])
+    med         = np.array([ np.median(stl[idx == i]) for i in range(len(unq)) ]) # median settle by dte
 
     spread_rows = spread_group.get_spread_rows(spread_id)
     cur_dte     = spread_rows[-1][spread.dte]
