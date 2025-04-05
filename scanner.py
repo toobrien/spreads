@@ -4,7 +4,7 @@ import  polars      as      pl
 from    statistics  import  mean, stdev
 from    sys         import  argv
 from    time        import  time
-from    util        import  get_active_spread_groups, spread
+from    util        import  add_scatters, add_pdfs, get_active_spread_groups, spread
 
 
 pl.Config.set_tbl_cols(-1)
@@ -13,6 +13,8 @@ pl.Config.set_tbl_rows(-1)
 
 SCANS       = loads(open("./scans.json", "r").read())
 COL_WIDTH   = 20
+DF          = None
+CACHED      = {}
 
 
 def moving_average(src, lag):
@@ -30,27 +32,6 @@ def moving_average(src, lag):
         res[i] = x
     
     return res
-
-
-# Not implemented: no consistent high / low data
-'''
-def atr(spread_id, spread_group, lag):
-
-    spread_rows = spread_group.get_spread_rows(spread_id)
-
-    tr = [
-        max(
-            spread_rows[i][spread.high] - spread_rows[i][spread.low],
-            spread_rows[i][spread.high] - spread_rows[i - 1][spread.settle],
-            spread_rows[i][spread.low] - spread_rows[i - 1][spread.settle]
-        )
-        for i in range(1, len(spread_rows))
-    ]
-
-    res = moving_average(tr, int(lag))
-    
-    return res
-'''
 
 
 def dte(spread_id, spread_group, params = None):
@@ -172,26 +153,19 @@ def z_settle(spread_id, spread_group, params = None):
 def forecast(spread_id, spread_group, horizon):
 
     horizon     = int(horizon)
-    all_rows    = spread_group.get_all_rows()
-    dte         = np.array([ row[spread.dte] for row in all_rows ])
-    stl         = np.array([ row[spread.settle] for row in all_rows ])
-    unq, idx    = np.unique(dte, return_inverse = True)
-    med         = np.array([ np.median(stl[idx == i]) for i in range(len(unq)) ]) # median settle by dte
-
+    df          = spread_group.get_df()
+    med         = df.group_by("dte").agg(median = pl.col("settle").median())
     spread_rows = spread_group.get_spread_rows(spread_id)
     cur_dte     = spread_rows[-1][spread.dte]
-    cur_stl     = spread_rows[-1][spread.settle]
     hor_dte     = max(cur_dte - horizon, 0)
-
-    i           = np.searchsorted(unq, cur_dte)
-    j           = np.searchsorted(unq, hor_dte)
-    f           = med[j] - med[i]
+    med_i       = med.filter(pl.col("dte") == cur_dte).get_column("median").item()
+    med_j       = med.filter(pl.col("dte") == hor_dte).get_column("median").item()
+    f           = med_j - med_i
 
     return [ f ]
 
 
 CRITERIA_FUNCS = {
-    #"atr":         atr,
     "dte":          dte,
     "rng_score":    rng_score,
     "sigma":        sigma,
@@ -212,6 +186,14 @@ def passes(latest, func):
     else:
         
         return True
+    
+
+def plot(idx):
+
+    id              = DF.filter(pl.col("idx") == idx).get_column("id").item()
+    spread_group    = CACHED[id]
+
+    pass
 
 
 def run(definition, criteria):
@@ -289,6 +271,8 @@ def run(definition, criteria):
             if display:
                 
                 rows.append(row)
+                
+                CACHED[row[1]] = spread_group
             
             else:
 
@@ -371,8 +355,8 @@ if __name__ == "__main__":
 
                         dfs.append(df)
     
-    df = pl.concat(dfs)
+    DF = pl.concat(dfs).with_row_count(name = "idx")
 
-    print(df)
+    print(DF)
 
     print(f"{time() - t0:0.1f}s")

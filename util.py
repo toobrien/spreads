@@ -70,6 +70,7 @@ class spread_group:
 
 
     active_ids  = None
+    df          = None
     group_id    = None
     mu          = None
     rows        = None
@@ -80,14 +81,14 @@ class spread_group:
     def __init__(self, active_ids, group_id, rows, spread_ids):
 
         self.active_ids = active_ids
+        self.df         = pl.DataFrame()
         self.group_id   = group_id
         self.spread_ids = spread_ids
         self.rows       = rows
 
-        settles = [ row[spread.settle] for row in self.rows]
-
-        self.mu     = mean(settles)
-        self.sigma  = stdev(settles)
+        settles         = [ row[spread.settle] for row in self.rows]
+        self.mu         = mean(settles)
+        self.sigma      = stdev(settles)
 
     
     def get_spread_rows(self, spread_id):
@@ -102,6 +103,22 @@ class spread_group:
     def get_all_rows(self):
 
         return self.rows
+
+
+    def get_df(self):
+
+        if self.df.is_empty():
+
+            self.df = pl.DataFrame(
+                {
+                    "date":     [ r[spread.date] for r in self.rows ],
+                    "id":       [ r[spread.id] for r in self.rows ],
+                    "settle":   [ r[spread.settle] for r in self.rows ],
+                    "dte":      [ r[spread.dte] for r in self.rows ]
+                }
+            )
+
+        return self.df
 
 
 class spread_wrapper:
@@ -175,15 +192,15 @@ def get_term_days(
 
 def get_spread_row(term_day: List, i: int, legs: List):
 
-    date        = term_day[i][term.date]
-    id          = tuple(
-        ( 
-            term_day[i + l[leg.idx]][term.month], 
-            term_day[i + l[leg.idx]][term.year]
-        )
-        for l in legs
-    )
-    settle       = 0
+    date    = term_day[i][term.date]
+    id      = tuple(
+                ( 
+                    term_day[i + l[leg.idx]][term.month], 
+                    term_day[i + l[leg.idx]][term.year]
+                )
+                for l in legs
+            )
+    settle  = 0
     
     for l in legs:
 
