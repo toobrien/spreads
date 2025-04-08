@@ -13,7 +13,6 @@ pl.Config.set_tbl_rows(-1)
 
 
 SCANS       = loads(open("./scans.json", "r").read())
-COL_WIDTH   = 20
 DF          = None
 CACHED      = {}
 
@@ -234,8 +233,6 @@ def plot(idx):
         fig.add_trace(go.Scattergl(t))
 
     fig.show()
-
-    pass
 
 
 def run(definition, criteria):
