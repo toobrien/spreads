@@ -1,10 +1,11 @@
-from    json        import  loads
-import  numpy       as      np
-import  polars      as      pl
-from    statistics  import  mean, stdev
-from    sys         import  argv
-from    time        import  time
-from    util        import  add_scatters, add_pdfs, get_active_spread_groups, spread
+from    json                    import  loads
+import  polars                  as      pl
+import  plotly.graph_objects    as      go
+from    statistics              import  mean, stdev
+from    sys                     import  argv
+from    time                    import  time
+from    typing                  import  List
+from    util                    import  get_active_spread_groups, spread
 
 
 pl.Config.set_tbl_cols(-1)
@@ -192,6 +193,47 @@ def plot(idx):
 
     id              = DF.filter(pl.col("idx") == idx).get_column("id").item()
     spread_group    = CACHED[id]
+    group_id        = "".join(spread_group.group_id)
+    df              = spread_group.get_df()
+    features        = df.group_by("dte").agg(
+                        pl.col("settle").median().alias("med"),
+                        pl.col("settle").quantile(0.05).alias("lo"),
+                        pl.col("settle").quantile(0.95).alias("hi")
+                    ).sort("dte", descending = True)
+    
+    traces = [
+        ( features["dte"],  features["med"], "med", "#FF00FF",  "lines" ),
+        ( features["dte"],  features["lo"],  "lo",  "#CCCCCC",  "lines" ),
+        ( features["dte"],  features["hi"],  "hi",  "#CCCCCC",  "lines" )
+    ]
+
+    for id_ in spread_group.active_ids:
+
+        rows    = spread_group.get_spread_rows(id_)
+        dte     = [ r[spread.dte] for r in rows ]
+        settle  = [ r[spread.settle] for r in rows ]
+        title   = f"{group_id} {id_[0][1][2:]}"
+        
+        traces.append(( dte, settle, title, None, "markers" ))
+    
+    fig = go.Figure()
+
+    for trace in traces:
+
+        t = {
+            "x":    trace[0],
+            "y":    trace[1],
+            "name": trace[2],
+            "mode": trace[4]
+        }
+
+        if trace[3]:
+
+            t[trace[4][:-1]] = { "color": trace[3] }
+
+        fig.add_trace(go.Scattergl(t))
+
+    fig.show()
 
     pass
 
@@ -292,17 +334,13 @@ def run(definition, criteria):
     return df
 
 
-if __name__ == "__main__":
+def scan(years: int, definitions: List[dict] = None):
 
-    t0          = time()
     criteria    = SCANS["criteria"]
     symbols     = SCANS["symbols"]
-    years       = int(argv[1])
     dfs         = []
 
-    if len(argv) > 2:
-
-        definitions = argv[2:]
+    if definitions:
 
         for definition in definitions:
 
@@ -355,8 +393,43 @@ if __name__ == "__main__":
 
                         dfs.append(df)
     
-    DF = pl.concat(dfs).with_row_count(name = "idx")
+    DF = pl.concat(dfs).with_row_index("idx")
 
-    print(DF)
+    return DF
 
-    print(f"{time() - t0:0.1f}s")
+
+if __name__ == "__main__":
+
+    t0          = time()
+    years       = int(argv[1])
+    definitions = argv[2:]
+    DF          = scan(years, definitions)
+
+    print(f"{time() - t0:0.1f}s\n")
+
+    while True:
+
+        next    = input("> ").split()
+        cmd     = next[0]
+
+        if cmd == "plot":
+
+            plot(int(next[1]))
+
+        elif cmd == "sort":
+
+            DF = DF.sort(next[1], descending = "desc" in next)
+
+        elif cmd == "print":
+
+            if len(next) > 1:
+
+                print(DF.filter(pl.col("symbol") == next[1]))
+            
+            else:
+            
+                print(DF)
+
+        elif cmd == "exit":
+
+            break
