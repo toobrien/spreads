@@ -114,28 +114,6 @@ def sigma(spread_id, spread_group, lag):
 
 def z_chg(spread_id, spread_group, lag):
 
-    '''
-    spread_rows = spread_group.get_spread_rows(spread_id)
-    lag         = int(lag)
-    d_settle    = [ 0 for i in range(len(spread_rows))]
-    mu          = [ None for i in range(len(spread_rows))] 
-    sigma       = [ None for i in range(len(spread_rows))]
-    
-    for i in range(1, len(spread_rows)):
-    
-        d_settle[i] = spread_rows[i][spread.settle] - spread_rows[i - 1][spread.settle]
-
-    for i in range(lag, len(d_settle)):
-    
-        mu[i]       = mean(d_settle[i - lag:i])
-        sigma[i]    = stdev(d_settle[i - lag:i])
-
-    res = [
-        (d_settle[i] - mu[i]) / sigma[i] if sigma[i] != 0 else 0
-        for i in range(lag, len(d_settle))
-    ]
-    '''
-
     rows    = spread_group.get_spread_rows(spread_id)
     latest  = rows[-1][spread.settle] - rows[-2][spread.settle]
     df      = spread_group.get_df()
