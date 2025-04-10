@@ -180,20 +180,21 @@ def passes(latest, func):
 
 def plot(idx):
 
+    span            = 5
     id              = DF.filter(pl.col("idx") == idx).get_column("id").item()
     spread_group    = CACHED[id]
     group_id        = "".join(spread_group.group_id)
     df              = spread_group.get_df()
     features        = df.group_by("dte").agg(
                         pl.col("settle").median().alias("med"),
-                        pl.col("settle").quantile(0.05).alias("lo"),
-                        pl.col("settle").quantile(0.95).alias("hi")
+                        pl.col("settle").min().alias("lo"),
+                        pl.col("settle").max().alias("hi")
                     ).sort("dte", descending = True)
     
     traces = [
-        ( features["dte"],  features["med"], "med", "#FF00FF",  "lines" ),
-        ( features["dte"],  features["lo"],  "lo",  "#CCCCCC",  "lines" ),
-        ( features["dte"],  features["hi"],  "hi",  "#CCCCCC",  "lines" )
+        ( features["dte"],  features["med"].rolling_median(span), "med", "#FF00FF",  "lines" ),
+        ( features["dte"],  features["lo"].rolling_min(span),  "lo",  "#CCCCCC",  "lines" ),
+        ( features["dte"],  features["hi"].rolling_max(span),  "hi",  "#CCCCCC",  "lines" )
     ]
 
     for id_ in spread_group.active_ids:
