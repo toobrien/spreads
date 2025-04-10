@@ -1,4 +1,5 @@
 from    json                    import  loads
+import  numpy                   as      np
 import  polars                  as      pl
 import  plotly.graph_objects    as      go
 from    statistics              import  mean, stdev
@@ -113,6 +114,7 @@ def sigma(spread_id, spread_group, lag):
 
 def z_chg(spread_id, spread_group, lag):
 
+    '''
     spread_rows = spread_group.get_spread_rows(spread_id)
     lag         = int(lag)
     d_settle    = [ 0 for i in range(len(spread_rows))]
@@ -132,6 +134,16 @@ def z_chg(spread_id, spread_group, lag):
         (d_settle[i] - mu[i]) / sigma[i] if sigma[i] != 0 else 0
         for i in range(lag, len(d_settle))
     ]
+    '''
+
+    rows    = spread_group.get_spread_rows(spread_id)
+    latest  = rows[-1][spread.settle] - rows[-2][spread.settle]
+    df      = spread_group.get_df()
+    chgs    = df.with_columns((pl.col("settle").diff().alias("chg")))["chg"].drop_nulls().to_numpy()
+    mu      = np.mean(chgs)
+    sigma   = np.std(chgs)
+    z       = (latest - mu) / sigma
+    res     = [ z ]
 
     return res
 
