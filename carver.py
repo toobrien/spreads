@@ -80,7 +80,7 @@ def carver_continuous_spread(
 
 if __name__ == "__main__":
 
-    pattern         = compile("\d{4}-\d{2}-\d{2}")
+    pattern         = compile(r"\d{4}-\d{2}-\d{2}")
     dates           = [ date for date in argv if pattern.match(date) ]
     start           = dates[0] if dates else "1900-01-01"
     end             = dates[1] if len(dates) > 1 else "2100-01-01"
