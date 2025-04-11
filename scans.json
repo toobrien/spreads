@@ -2,7 +2,7 @@
     "criteria": [
         "dte",
         "z_settle",
-        "z_chg:20",
+        "z_chg",
         "sigma:20:$",
         "forecast:60:$"
     ],

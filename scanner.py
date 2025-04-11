@@ -112,7 +112,7 @@ def sigma(spread_id, spread_group, lag):
     return res
 
 
-def z_chg(spread_id, spread_group, lag):
+def z_chg(spread_id, spread_group, params = None):
 
     rows    = spread_group.get_spread_rows(spread_id)
     latest  = rows[-1][spread.settle] - rows[-2][spread.settle]
@@ -181,7 +181,9 @@ def passes(latest, func):
 def plot(idx):
 
     span            = 5
-    id              = DF.filter(pl.col("idx") == idx).get_column("id").item()
+    row             = DF.filter(pl.col("idx") == idx)
+    id              = row["id"][0]
+    sym             = row["symbol"][0]
     spread_group    = CACHED[id]
     group_id        = "".join(spread_group.group_id)
     df              = spread_group.get_df()
@@ -192,19 +194,20 @@ def plot(idx):
                     ).sort("dte", descending = True)
     
     traces = [
-        ( features["dte"],  features["med"].rolling_median(span), "med", "#FF00FF",  "lines" ),
-        ( features["dte"],  features["lo"].rolling_min(span),  "lo",  "#CCCCCC",  "lines" ),
-        ( features["dte"],  features["hi"].rolling_max(span),  "hi",  "#CCCCCC",  "lines" )
+        ( features["dte"],  features["med"].rolling_median(span),   None, "med", "#FF00FF",  "lines" ),
+        ( features["dte"],  features["lo"].rolling_min(span),       None, "lo",  "#CCCCCC",  "lines" ),
+        ( features["dte"],  features["hi"].rolling_max(span),       None, "hi",  "#CCCCCC",  "lines" )
     ]
 
     for id_ in spread_group.active_ids:
 
         rows    = spread_group.get_spread_rows(id_)
+        text    = [ r[spread.date] for r in rows ]
         dte     = [ r[spread.dte] for r in rows ]
         settle  = [ r[spread.settle] for r in rows ]
         title   = f"{group_id} {id_[0][1][2:]}"
         
-        traces.append(( dte, settle, title, None, "markers" ))
+        traces.append(( dte, settle, text, title, None, "markers" ))
     
     fig = go.Figure()
 
@@ -213,16 +216,21 @@ def plot(idx):
         t = {
             "x":    trace[0],
             "y":    trace[1],
-            "name": trace[2],
-            "mode": trace[4]
+            "name": trace[3],
+            "mode": trace[5]
         }
 
-        if trace[3]:
+        if trace[2]:
 
-            t[trace[4][:-1]] = { "color": trace[3] }
+            t["text"] = trace[2]
+
+        if trace[4]:
+
+            t[trace[5][:-1]] = { "color": trace[4] }
 
         fig.add_trace(go.Scattergl(t))
 
+    fig.update_layout(title = f"{sym} {id}")
     fig.show()
 
 
