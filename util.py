@@ -861,7 +861,7 @@ def get_continuous(
         
         for rec in series:
 
-            rec[r.settle] /= cum_adj
+            rec[r.settle] -= cum_adj
         
 
     return series
