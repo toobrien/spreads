@@ -134,7 +134,8 @@ if __name__ == "__main__":
     ske     = skew(returns) / 16
     sharpe  = mu / sigma
 
-    print(f"\n{'annualized':10}{'pts':>15}{'$':>10}\n")
+    print(f"\n{'multiplier':10}{mult:>15}")
+    print(f"{'annualized':10}{'pts':>15}{'$':>10}\n")
     print(f"{'mu:':10}{mu:>15.4f}{mu * mult:>10.2f}")
     print(f"{'sigma:':10}{sigma:>15.4f}{sigma * mult:>10.2f}")
     print(f"{'kurtosis:':10}{kur:>15.4f}")
