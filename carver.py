@@ -29,7 +29,7 @@ def carver_continuous_spread(
     ratios      =   np.array([ quantities[i] * multipliers[i] for i in range(len(quantities)) ])
     base        =   np.max(np.abs(ratios))
     mult        =   multipliers[int(np.where(np.abs(ratios) == base)[0][0])]
-    ratios      /=  base
+    ratios      /=  mult
 
     series = [
         get_continuous(symbols[i], start, end, terms[i], "sum_adjusted")
@@ -66,14 +66,13 @@ def carver_continuous_spread(
 
     for rec in spread:
 
+        stl = 0
+
         for i in range(1, len(rec)):
 
-            rec[i] = rec[i] * ratios[i - 1]
-    
-    spread = [
-        [ rec[0], *rec[1:], sum(rec[1:]) ]
-        for rec in spread
-    ]
+            stl += rec[i] * ratios[i - 1]
+
+        rec.append(stl)
 
     return spread, mult
 
@@ -114,7 +113,7 @@ if __name__ == "__main__":
             go.Scatter(
                 {
                     "x":    x,
-                    "y":    [ rec[i + 1] / qtys[i] for rec in spread ],
+                    "y":    [ rec[i + 1] for rec in spread ],
                     "name": f"{symbol}[{terms[i]}]"
                 }
             ),
@@ -123,23 +122,28 @@ if __name__ == "__main__":
         )
 
     returns = np.diff(np.array([x[-1] for x in spread]))
-    returns = [
+    returns = sorted([
                 (spread[i][-1] - spread[i - 1][-1])
                 for i in range(1, len(spread))
-            ]
+            ])
     
-    mu      = np.mean(returns) * 256
-    sigma   = np.std(returns) * 16
-    kur     = kurtosis(returns) / 256
-    ske     = skew(returns) / 16
-    sharpe  = mu / sigma
+    mu          = np.mean(returns) * 256
+    sigma       = np.std(returns) * 16
+    sharpe      = mu / sigma
+    #kur         = kurtosis(returns) / 256
+    ske         = skew(returns) / 16
+    normal      = 2.245
+    lower_tail  = abs(np.percentile(returns, 1)) / abs(np.percentile(returns, 15)) / normal
+    upper_tail  = abs(np.percentile(returns, 99)) / abs(np.percentile(returns, 85)) / normal
 
-    print(f"\n{'multiplier':10}{mult:>15}")
-    print(f"{'annualized':10}{'pts':>15}{'$':>10}\n")
-    print(f"{'mu:':10}{mu:>15.4f}{mu * mult:>10.2f}")
-    print(f"{'sigma:':10}{sigma:>15.4f}{sigma * mult:>10.2f}")
-    print(f"{'kurtosis:':10}{kur:>15.4f}")
-    print(f"{'skew:':10}{ske:>15.4f}")
-    print(f"{'sharpe:':10}{sharpe:>15.4f}\n")
+    print(f"\n{'multiplier':15}{mult:>15}\n")
+    print(f"{'':15}{'pts':>15}{'$':>10}")
+    print(f"{'mu:':15}{mu:>15.4f}{mu * mult:>10.2f}")
+    print(f"{'sigma:':15}{sigma:>15.4f}{sigma * mult:>10.2f}\n")
+    print(f"{'sharpe:':15}{sharpe:>15.2f}")
+    #print(f"{'kurtosis:':10}{kur:>15.4f}")
+    print(f"{'skew:':15}{ske:>15.2f}")
+    print(f"{"lower tail:":15}{lower_tail:>15.2f}")
+    print(f"{"upper tail:":15}{upper_tail:>15.2f}\n")
 
     fig.show()
