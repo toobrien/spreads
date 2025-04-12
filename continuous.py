@@ -59,14 +59,13 @@ def continuous_spread(
 
     for rec in spread:
 
+        stl = 0
+
         for i in range(1, len(rec)):
 
-            rec[i] = rec[i] * quantities[i - 1]
-    
-    spread = [
-        [ rec[0], *rec[1:], sum(rec[1:]) ]
-        for rec in spread
-    ]
+            stl += rec[i] * quantities[i - 1]
+
+        rec.append(stl)
 
     return spread
 
@@ -111,7 +110,7 @@ if __name__ == "__main__":
             go.Scatter(
                 {
                     "x":    x,
-                    "y":    [ rec[i + 1] / qtys[i] for rec in spread ],
+                    "y":    [ rec[i] for rec in spread ],
                     "name": f"{symbol}[{terms[i]}]"
                 }
             ),
