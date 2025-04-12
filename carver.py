@@ -3,7 +3,7 @@ import  numpy                   as      np
 import  plotly.graph_objects    as      go
 from    plotly.subplots         import  make_subplots
 from    re                      import  compile
-from    scipy.stats             import  kurtosis, skew
+from    scipy.stats             import  skew
 from    sys                     import  argv
 from    typing                  import  List
 from    util                    import  get_continuous, r
@@ -141,7 +141,6 @@ if __name__ == "__main__":
     print(f"{'mu:':15}{mu:>15.4f}{mu * mult:>10.2f}")
     print(f"{'sigma:':15}{sigma:>15.4f}{sigma * mult:>10.2f}\n")
     print(f"{'sharpe:':15}{sharpe:>15.2f}")
-    #print(f"{'kurtosis:':10}{kur:>15.4f}")
     print(f"{'skew:':15}{ske:>15.2f}")
     print(f"{"lower tail:":15}{lower_tail:>15.2f}")
     print(f"{"upper tail:":15}{upper_tail:>15.2f}\n")
